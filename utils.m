@@ -49,6 +49,59 @@ void importSnippets(NSString *bundleRoot, NSString *outputFile)
 	
 }
 
+void processPattern(NSDictionary *pattern, SFONode **rootNode) {
+	SFONode *nodePattern;
+	if([pattern objectForKey:@"name"] != nil) {
+		nodePattern = SELFML(@"zone", [pattern objectForKey:@"name"]);
+	} else {
+		nodePattern = SELFML(@"zone");
+		if([pattern objectForKey:@"contentName"] != nil) {
+			SFONode *innerIdentifier = SELFML(@"innerIdentifier", [pattern objectForKey:@"contentName"]);
+			[nodePattern addChild:innerIdentifier];
+		}
+	}
+	// match
+	if([pattern objectForKey:@"match"] != nil) {
+		SFONode *regexNode = SELFML(@"regex", [pattern objectForKey:@"match"]);
+		SFONode *matchNode = SELFML(@"match");
+		[matchNode addChild:regexNode];
+		[nodePattern addChild:matchNode];
+	}
+	if([pattern objectForKey:@"begin"] != nil) {
+		SFONode *regexNode = SELFML(@"regex", [pattern objectForKey:@"begin"]);
+		SFONode *startNode = SELFML(@"start");
+		// come up with the name
+		
+		[startNode addChild:regexNode];
+		
+		if([pattern objectForKey:@"beginCaptures"] != nil) {
+			NSDictionary *beginCaptureDic = [pattern objectForKey:@"beginCaptures"];
+			
+			if([beginCaptureDic objectForKey:@"contentName"] != nil){
+				[startNode addChild:(NSString *)[beginCaptureDic objectForKey:@"contentName"]];
+			} 			
+			for(NSString *akey in [beginCaptureDic allKeys]) {
+				if([akey intValue] || [akey isEqual:@"0"] || [akey isEqual:[NSNumber numberWithInt:0]]) {
+					SFONode *captureNode = SELFML(akey, [[beginCaptureDic valueForKey:akey] valueForKey:@"name"]);
+					[regexNode addChild:captureNode];
+				}
+			}
+		}
+		
+		[nodePattern addChild:startNode];
+	}
+	if([pattern objectForKey:@"end"] != nil) {
+		SFONode *regexNode = SELFML(@"regex", [pattern objectForKey:@"end"]);
+		SFONode *endNode = SELFML(@"end");
+		[endNode addChild:regexNode];
+		[nodePattern addChild:endNode];
+	}
+	
+	
+	//NSLog(@"Zone: %@", [nodePattern selfmlRepresentation]);
+	[*rootNode addChild:nodePattern];
+}
+
 void processLanguage(NSString *languagePath)
 {
 	NSLog(@"Language: %@", languagePath);
@@ -61,19 +114,7 @@ void processLanguage(NSString *languagePath)
 	// patterns...
 	for(NSDictionary *pattern in [languageAsDic valueForKey:@"patterns"])
 	{
-		SFONode *nodePattern;
-		if([pattern objectForKey:@"name"] != nil) {
-			nodePattern = SELFML(@"zone", [pattern objectForKey:@"name"]);
-		} else {
-			nodePattern = SELFML(@"zone");
-			if([pattern objectForKey:@"contentName"] != nil) {
-				SFONode *innerIdentifier = SELFML(@"innerIdentifier", [pattern objectForKey:@"contentName"]);
-				[nodePattern addChild:innerIdentifier];
-			}
-		}
-		
-		//NSLog(@"Zone: %@", [nodePattern selfmlRepresentation]);
-		[rootNode addChild:nodePattern];
+		processPattern(pattern, &rootNode);
 	}
 	
 	
