@@ -65,6 +65,21 @@ void processPattern(NSDictionary *pattern, SFONode **rootNode) {
 		SFONode *regexNode = SELFML(@"regex", [pattern objectForKey:@"match"]);
 		SFONode *matchNode = SELFML(@"match");
 		[matchNode addChild:regexNode];
+		
+		if([pattern objectForKey:@"captures"] != nil) {
+			NSDictionary *captureDic = [pattern objectForKey:@"captures"];
+			
+			if([captureDic objectForKey:@"contentName"] != nil){
+				[matchNode addChild:(NSString *)[captureDic objectForKey:@"contentName"]];
+			} 			
+			for(NSString *akey in [captureDic allKeys]) {
+				if([akey intValue] || [akey isEqual:@"0"] || [akey isEqual:[NSNumber numberWithInt:0]]) {
+					SFONode *captureNode = SELFML(akey, [[captureDic valueForKey:akey] valueForKey:@"name"]);
+					[regexNode addChild:captureNode];
+				}
+			}
+		}
+		
 		[nodePattern addChild:matchNode];
 	}
 	if([pattern objectForKey:@"begin"] != nil) {
@@ -94,6 +109,21 @@ void processPattern(NSDictionary *pattern, SFONode **rootNode) {
 		SFONode *regexNode = SELFML(@"regex", [pattern objectForKey:@"end"]);
 		SFONode *endNode = SELFML(@"end");
 		[endNode addChild:regexNode];
+		
+		if([pattern objectForKey:@"endCaptures"] != nil) {
+			NSDictionary *endCaptureDic = [pattern objectForKey:@"endCaptures"];
+			
+			if([endCaptureDic objectForKey:@"contentName"] != nil){
+				[endNode addChild:(NSString *)[endCaptureDic objectForKey:@"contentName"]];
+			} 			
+			for(NSString *akey in [endCaptureDic allKeys]) {
+				if([akey intValue] || [akey isEqual:@"0"] || [akey isEqual:[NSNumber numberWithInt:0]]) {
+					SFONode *captureNode = SELFML(akey, [[endCaptureDic valueForKey:akey] valueForKey:@"name"]);
+					[regexNode addChild:captureNode];
+				}
+			}
+		}
+		
 		[nodePattern addChild:endNode];
 	}
 	
@@ -134,7 +164,7 @@ void importLanguages(NSString *bundleRoot, NSString *outputFile)
 													error:nil];
 	
 	for(NSString *language in [[NSFileManager defaultManager] contentsOfDirectoryAtPath:syntaxInPath error:nil]) {
-		if([[[language pathExtension] lowercaseString] isEqual:@"tmlanguage"]) {
+		if([[[language pathExtension] lowercaseString] isEqual:@"tmlanguage"] || [[[language pathExtension] lowercaseString] isEqual:@"plist"]) {
 			processLanguage([syntaxInPath stringByAppendingPathComponent:language]);
 		}
 	}
