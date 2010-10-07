@@ -49,7 +49,7 @@ void importSnippets(NSString *bundleRoot, NSString *outputFile)
 	
 }
 
-void processPattern(NSDictionary *pattern, SFONode **rootNode, BOOL insideZone) {
+void processPattern(NSDictionary *pattern, SFONode **rootNode) {
 	SFONode *nodePattern;
 	
 	// Deal with includes right alway
@@ -59,27 +59,17 @@ void processPattern(NSDictionary *pattern, SFONode **rootNode, BOOL insideZone) 
 		return;
 	}
 	
-	if(!insideZone) {
-		if([pattern objectForKey:@"name"] != nil) {
-			nodePattern = SELFML(@"zone", [pattern objectForKey:@"name"]);
-		} else {
-			nodePattern = SELFML(@"zone");
-			if([pattern objectForKey:@"contentName"] != nil) {
-				SFONode *innerIdentifier = SELFML(@"innerIdentifier", [pattern objectForKey:@"contentName"]);
-				[nodePattern addChild:innerIdentifier];
-			}
-		}
+
+	if([pattern objectForKey:@"name"] != nil) {
+		nodePattern = SELFML(@"zone", [pattern objectForKey:@"name"]);
 	} else {
-		if([pattern objectForKey:@"name"] != nil) {
-			nodePattern = SELFML(@"subzone", [pattern objectForKey:@"name"]);
-		} else {
-			nodePattern = SELFML(@"subzone");
-			if([pattern objectForKey:@"contentName"] != nil) {
-				SFONode *innerIdentifier = SELFML(@"innerIdentifier", [pattern objectForKey:@"contentName"]);
-				[nodePattern addChild:innerIdentifier];
-			}
+		nodePattern = SELFML(@"zone");
+		if([pattern objectForKey:@"contentName"] != nil) {
+			SFONode *innerIdentifier = SELFML(@"innerIdentifier", [pattern objectForKey:@"contentName"]);
+			[nodePattern addChild:innerIdentifier];
 		}
 	}
+
 	
 	// match
 	if([pattern objectForKey:@"match"] != nil) {
@@ -145,16 +135,18 @@ void processPattern(NSDictionary *pattern, SFONode **rootNode, BOOL insideZone) 
 			}
 		}
 		
-		// Deal with inner patterns...reccursively?
-		if([pattern objectForKey:@"patterns"] != nil) {
-			for(NSDictionary *subpattern in [pattern valueForKey:@"patterns"]) {
-				processPattern(subpattern, &nodePattern, YES);
-			}
-		}
 		
 		[nodePattern addChild:endNode];
 	}
 	
+	// Deal with inner patterns...reccursively?
+	if([pattern objectForKey:@"patterns"] != nil) {
+		SFONode *subzoneNode = SELFML(@"subzones");
+		for(NSDictionary *subpattern in [pattern valueForKey:@"patterns"]) {
+			processPattern(subpattern, &subzoneNode);
+		}
+		[nodePattern addChild:subzoneNode];
+	}
 	
 	//NSLog(@"Zone: %@", [nodePattern selfmlRepresentation]);
 	[*rootNode addChild:nodePattern];
@@ -181,7 +173,7 @@ void processLanguage(NSString *languagePath, NSString *outputPath)
 	// patterns...
 	for(NSDictionary *pattern in [languageAsDic valueForKey:@"patterns"])
 	{
-		processPattern(pattern, &rootNode, NO);
+		processPattern(pattern, &rootNode);
 	}
 	
 	[[rootNode selfmlRepresentation] writeToFile:[[outputPath stringByAppendingPathComponent:outputDirName] stringByAppendingPathComponent:@"syntax.selfml"] 
