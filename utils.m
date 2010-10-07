@@ -205,5 +205,19 @@ void importLanguages(NSString *bundleRoot, NSString *outputFile)
 	
 }
 
+void copyResources(NSString *bundleRoot, NSString *outputFile)
+{
+	NSString *supportDir = [bundleRoot stringByAppendingPathComponent:@"Support"];
+	NSString *destinationPath = [outputFile stringByAppendingPathComponent:@"resources"];
+	
+	if(![[NSFileManager defaultManager] fileExistsAtPath:supportDir]) 
+		return;
+	
+
+	[[NSFileManager defaultManager] copyItemAtPath:supportDir toPath:destinationPath error:nil];
+	
+	
+}
+
 
 

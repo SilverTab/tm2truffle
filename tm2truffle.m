@@ -25,6 +25,8 @@ int main (int argc, const char * argv[]) {
 		return 1;
 	}
 	
+	
+	copyResources(pathToBundle, outputPath);
 	importLanguages(pathToBundle, outputPath);
 	// Good! Do something with it!
 	//importSnippets(pathToBundle, outputPath);
