@@ -49,17 +49,38 @@ void importSnippets(NSString *bundleRoot, NSString *outputFile)
 	
 }
 
-void processPattern(NSDictionary *pattern, SFONode **rootNode) {
+void processPattern(NSDictionary *pattern, SFONode **rootNode, BOOL insideZone) {
 	SFONode *nodePattern;
-	if([pattern objectForKey:@"name"] != nil) {
-		nodePattern = SELFML(@"zone", [pattern objectForKey:@"name"]);
+	
+	// Deal with includes right alway
+	if([pattern objectForKey:@"include"] != nil) {
+		nodePattern = SELFML(@"include", [[pattern objectForKey:@"include"] stringByReplacingOccurrencesOfString:@"#" withString:@"@"]);
+		[*rootNode addChild:nodePattern];
+		return;
+	}
+	
+	if(!insideZone) {
+		if([pattern objectForKey:@"name"] != nil) {
+			nodePattern = SELFML(@"zone", [pattern objectForKey:@"name"]);
+		} else {
+			nodePattern = SELFML(@"zone");
+			if([pattern objectForKey:@"contentName"] != nil) {
+				SFONode *innerIdentifier = SELFML(@"innerIdentifier", [pattern objectForKey:@"contentName"]);
+				[nodePattern addChild:innerIdentifier];
+			}
+		}
 	} else {
-		nodePattern = SELFML(@"zone");
-		if([pattern objectForKey:@"contentName"] != nil) {
-			SFONode *innerIdentifier = SELFML(@"innerIdentifier", [pattern objectForKey:@"contentName"]);
-			[nodePattern addChild:innerIdentifier];
+		if([pattern objectForKey:@"name"] != nil) {
+			nodePattern = SELFML(@"subzone", [pattern objectForKey:@"name"]);
+		} else {
+			nodePattern = SELFML(@"subzone");
+			if([pattern objectForKey:@"contentName"] != nil) {
+				SFONode *innerIdentifier = SELFML(@"innerIdentifier", [pattern objectForKey:@"contentName"]);
+				[nodePattern addChild:innerIdentifier];
+			}
 		}
 	}
+	
 	// match
 	if([pattern objectForKey:@"match"] != nil) {
 		SFONode *regexNode = SELFML(@"regex", [pattern objectForKey:@"match"]);
@@ -124,6 +145,13 @@ void processPattern(NSDictionary *pattern, SFONode **rootNode) {
 			}
 		}
 		
+		// Deal with inner patterns...reccursively?
+		if([pattern objectForKey:@"patterns"] != nil) {
+			for(NSDictionary *subpattern in [pattern valueForKey:@"patterns"]) {
+				processPattern(subpattern, &nodePattern, YES);
+			}
+		}
+		
 		[nodePattern addChild:endNode];
 	}
 	
@@ -132,20 +160,34 @@ void processPattern(NSDictionary *pattern, SFONode **rootNode) {
 	[*rootNode addChild:nodePattern];
 }
 
-void processLanguage(NSString *languagePath)
+void processLanguage(NSString *languagePath, NSString *outputPath)
 {
-	NSLog(@"Language: %@", languagePath);
 	NSDictionary *languageAsDic = [NSDictionary dictionaryWithContentsOfFile:languagePath];
-	NSString *outputDirName = [[languageAsDic valueForKey:@"scopeName"] stringByReplacingOccurrencesOfString:@"source." withString:@""];
 	
-	SFONode *rootNode = [SFONode node];
-	[rootNode setHead:@"root"];
+	NSString *bundleSourceName = [languageAsDic valueForKey:@"scopeName"];
+	NSMutableArray *components = [[bundleSourceName componentsSeparatedByString:@"."] mutableCopy];
+	[components removeObject:@"source"];
+	[components removeObject:@"sourcecode"];
+	NSString *outputDirName = [[components componentsJoinedByString:@"."] stringByReplacingOccurrencesOfString:@"/" withString:@""];
+	
+	// Create the output directory
+	[[NSFileManager defaultManager] createDirectoryAtPath:[outputPath stringByAppendingPathComponent:outputDirName]
+							  withIntermediateDirectories:NO 
+											   attributes:nil 
+													error:nil];
+	
+	SFONode *rootNode = SELFML(@"root", [languageAsDic valueForKey:@"scopeName"]);
 	
 	// patterns...
 	for(NSDictionary *pattern in [languageAsDic valueForKey:@"patterns"])
 	{
-		processPattern(pattern, &rootNode);
+		processPattern(pattern, &rootNode, NO);
 	}
+	
+	[[rootNode selfmlRepresentation] writeToFile:[[outputPath stringByAppendingPathComponent:outputDirName] stringByAppendingPathComponent:@"syntax.selfml"] 
+									  atomically:YES 
+										encoding:NSUTF8StringEncoding 
+										   error:nil];
 	
 	
 	NSLog(@"Out: %@", [rootNode selfmlRepresentation]);
@@ -165,7 +207,7 @@ void importLanguages(NSString *bundleRoot, NSString *outputFile)
 	
 	for(NSString *language in [[NSFileManager defaultManager] contentsOfDirectoryAtPath:syntaxInPath error:nil]) {
 		if([[[language pathExtension] lowercaseString] isEqual:@"tmlanguage"] || [[[language pathExtension] lowercaseString] isEqual:@"plist"]) {
-			processLanguage([syntaxInPath stringByAppendingPathComponent:language]);
+			processLanguage([syntaxInPath stringByAppendingPathComponent:language], syntaxOutPath);
 		}
 	}
 	
