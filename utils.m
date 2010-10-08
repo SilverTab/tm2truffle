@@ -90,7 +90,7 @@ void processCommand(NSString *fullPath, NSString *outputPath)
 	
 	// scope
 	if([commandDic objectForKey:@"scope"] != nil) {
-		SFONode *scopeNode = SELFML(@"only-for", [commandDic objectForKey:@"scope"]);
+		SFONode *scopeNode = SELFML(@"only-in", [commandDic objectForKey:@"scope"]);
 		[rootNode addChild:scopeNode];
 	}
 	
