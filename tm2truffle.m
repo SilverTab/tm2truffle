@@ -25,6 +25,10 @@ int main (int argc, const char * argv[]) {
 		return 1;
 	}
 	
+	if(!importMetaData(pathToBundle, outputPath)) {
+		return 1;
+	}
+	
 	
 	copyResources(pathToBundle, outputPath);
 	importLanguages(pathToBundle, outputPath);
