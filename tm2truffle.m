@@ -28,6 +28,7 @@ int main (int argc, const char * argv[]) {
 	
 	copyResources(pathToBundle, outputPath);
 	importLanguages(pathToBundle, outputPath);
+	importCommands(pathToBundle, outputPath);
 	// Good! Do something with it!
 	//importSnippets(pathToBundle, outputPath);
 	[pool release];

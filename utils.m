@@ -1,6 +1,9 @@
 #import "utils.h"
 #import <self-ml/SFONode.h>
 
+
+#pragma mark -
+#pragma mark Useful stuff
 int createOutputDir(NSString *outputFile) 
 {
 	NSError *error;
@@ -17,6 +20,8 @@ int createOutputDir(NSString *outputFile)
 }
 
 
+#pragma mark Snippets 
+
 void processSnippet(NSString *snippetPath)
 {
 	NSDictionary *snippetAsDic = [NSDictionary dictionaryWithContentsOfFile:snippetPath];
@@ -25,7 +30,7 @@ void processSnippet(NSString *snippetPath)
 
 void importSnippets(NSString *bundleRoot, NSString *outputFile)
 {
-	NSString *snippetsPath = [bundleRoot stringByAppendingPathComponent:@"snippets"];
+	NSString *snippetsPath = [bundleRoot stringByAppendingPathComponent:@"Snippets"];
 	NSMutableArray *snippets = [[NSMutableArray alloc] init];
 	if(![[NSFileManager defaultManager] fileExistsAtPath:snippetsPath]) {
 		NSLog(@"No snippets to import...continuing...");
@@ -48,6 +53,113 @@ void importSnippets(NSString *bundleRoot, NSString *outputFile)
 	}
 	
 }
+
+#pragma mark -
+#pragma mark Commands
+
+void processCommand(NSString *fullPath, NSString *outputPath)
+{
+	NSString *fileName = [[fullPath lastPathComponent] stringByReplacingOccurrencesOfString:@" " withString:@"-"];
+	NSString *fullFileName = [fileName stringByReplacingOccurrencesOfString:[fileName pathExtension] withString:@"selfml"];
+	NSDictionary *commandDic = [NSDictionary dictionaryWithContentsOfFile:fullPath];
+	NSString *fullOutputPath = [outputPath stringByAppendingPathComponent:fullFileName];
+	SFONode *rootNode = [SFONode node];
+	
+	// output equivalent dic
+	NSMutableDictionary *outputDic = [[NSMutableDictionary alloc] init];
+	[outputDic setObject:@"nothing" forKey:@"discard"];
+	[outputDic setObject:@"replace-selected" forKey:@"replaceSelectedText"];
+	[outputDic setObject:@"replace-all" forKey:@"replaceDocument"];
+	[outputDic setObject:@"after-selected" forKey:@"afterSelectedText"];
+	[outputDic setObject:@"snippet" forKey:@"insertAsSnippet"];
+	[outputDic setObject:@"html" forKey:@"showAsHTML"];
+	[outputDic setObject:@"tooltip" forKey:@"showAsTooltip"];
+	[outputDic setObject:@"new-document" forKey:@"openAsNewDocument"];
+	
+	// beforeRunningCommand dic
+	NSMutableDictionary *brcDic = [[NSMutableDictionary alloc] init];
+	[brcDic setObject:@"nothing" forKey:@"nop"];
+	[brcDic setObject:@"file" forKey:@"saveActiveFile"];
+	[brcDic setObject:@"project" forKey:@"saveModifiedFiles"];
+	
+	// name
+	if([commandDic objectForKey:@"name"] != nil) {
+		SFONode *nameNode = SELFML(@"name", [commandDic objectForKey:@"name"]);
+		[rootNode addChild:nameNode];
+	}
+	
+	// scope
+	if([commandDic objectForKey:@"scope"] != nil) {
+		SFONode *scopeNode = SELFML(@"only-for", [commandDic objectForKey:@"scope"]);
+		[rootNode addChild:scopeNode];
+	}
+	
+	// input
+	if ([commandDic objectForKey:@"input"] != nil) {
+		NSString *inputValue = ([[commandDic objectForKey:@"input"] isEqual:@"none"]) ? @"nothing" : [commandDic objectForKey:@"input"];
+		SFONode *inputNode = SELFML(@"input", inputValue);
+		
+		if ([commandDic objectForKey:@"fallbackInput"] != nil) {
+			[inputNode addChild:(NSString *)[commandDic objectForKey:@"fallbackInput"]];
+		}
+		
+		[rootNode addChild:inputNode];
+	}
+	
+	// output
+	if([commandDic objectForKey:@"output"] != nil) {
+		NSString *outputValue = [outputDic objectForKey:[commandDic objectForKey:@"output"]];
+		SFONode *outputNode = SELFML(@"output", outputValue);
+		[rootNode addChild:outputNode];
+	}
+	
+	// brc
+	if([commandDic objectForKey:@"beforeRunningCommand"] != nil) {
+		SFONode *brcNode = SELFML(@"save", [brcDic objectForKey:[commandDic objectForKey:@"beforeRunningCommand"]]);
+		[rootNode addChild:brcNode];
+	}
+	
+	// src
+	if([commandDic objectForKey:@"command"] != nil) {
+		SFONode *commandNode = SELFML(@"script", [commandDic objectForKey:@"command"]);
+		[rootNode addChild:commandNode];
+	}
+	
+	[[rootNode selfmlRepresentation] writeToFile:fullOutputPath 
+									  atomically:YES 
+										encoding:NSUTF8StringEncoding 
+										   error:nil];
+	
+	//NSLog(@"Output: %@", [rootNode selfmlRepresentation]);
+}
+
+void importCommands(NSString *bundleRoot, NSString *outputFile)
+{
+	NSString *commandsPath = [bundleRoot stringByAppendingPathComponent:@"Commands"];
+	NSString *commandsOutputPath = [outputFile stringByAppendingPathComponent:@"commands"];
+	NSFileManager *fm = [NSFileManager defaultManager];
+	
+	if(![[NSFileManager defaultManager] fileExistsAtPath:commandsPath]) {
+		NSLog(@"No commnads to import...continuing...");
+		return;
+	}
+	// create the snippet directory...
+	[fm createDirectoryAtPath:commandsOutputPath
+  withIntermediateDirectories:YES 
+				   attributes:nil 
+						error:nil];
+	
+	for(NSString *command in [fm contentsOfDirectoryAtPath:commandsPath error:nil]) {
+		if([[[command pathExtension] lowercaseString] isEqual:@"tmcommand"] || [[[command pathExtension] lowercaseString] isEqual:@"plist"]) {
+			processCommand([commandsPath stringByAppendingPathComponent:command], commandsOutputPath);
+		}
+	}
+	
+}
+
+
+#pragma mark -
+#pragma mark Language/Syntax
 
 void processPattern(NSDictionary *pattern, SFONode **rootNode) {
 	SFONode *nodePattern;
@@ -182,7 +294,7 @@ void processLanguage(NSString *languagePath, NSString *outputPath)
 										   error:nil];
 	
 	
-	NSLog(@"Out: %@", [rootNode selfmlRepresentation]);
+	//NSLog(@"Out: %@", [rootNode selfmlRepresentation]);
 }
 
 void importLanguages(NSString *bundleRoot, NSString *outputFile)
@@ -204,6 +316,9 @@ void importLanguages(NSString *bundleRoot, NSString *outputFile)
 	}
 	
 }
+
+#pragma mark -
+#pragma mark Resources
 
 void copyResources(NSString *bundleRoot, NSString *outputFile)
 {
