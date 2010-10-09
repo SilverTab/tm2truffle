@@ -380,5 +380,54 @@ void copyResources(NSString *bundleRoot, NSString *outputFile)
 	
 }
 
+#pragma mark -
+#pragma mark Templates
+void processTemplate(NSString *fullPath, NSString *outputDir, NSString *bundleRoot)
+{
+	// OK so, the info.plist contains the meta data about the template,
+	// every other file in there is an actual template!
+	SFONode *rootNode = [SFONode node];
+	NSDictionary *metaData = [NSDictionary dictionaryWithContentsOfFile:[fullPath stringByAppendingPathComponent:@"info.plist"]];
+	NSDictionary *bundleMetaData = [NSDictionary dictionaryWithContentsOfFile:[bundleRoot stringByAppendingPathComponent:@"info.plist"]];
+	// first the name!
+	if([metaData objectForKey:@"name"]) {
+		SFONode *nameNode = SELFML(@"name", [metaData valueForKey:@"name"]);
+		[rootNode addChild:nameNode];
+	}
+	// Group
+	SFONode *platformNode = SELFML(@"group.platform", @"Misc");
+	[rootNode addChild:platformNode];
+	
+	// Get the name of the bundle...
+	SFONode *principleNode;
+	if([bundleMetaData objectForKey:@"name"] != nil) {
+		principleNode = SELFML(@"group.principles", [bundleMetaData objectForKey:@"name"]);
+	} else {
+		principleNode = SELFML(@"group.principles", @"Unknown");
+	}
+	[rootNode addChild:principleNode];
+	
+	NSLog(@"Template: %@", [rootNode selfmlRepresentation]);
+}
+
+void importTemplates(NSString *bundleRoot, NSString *outputFile)
+{
+	NSString *templatePath = [bundleRoot stringByAppendingPathComponent:@"Templates"];
+	NSString *templateOutputDir = [outputFile stringByAppendingPathComponent:@"templates"];
+	NSFileManager *fm = [NSFileManager defaultManager];
+	
+	// do we have to import them?
+	if(![fm fileExistsAtPath:templatePath]) {
+		NSLog(@"No templates, continuing!");
+		return;
+	}
+	
+	// Get the full path and process it!
+	for(NSString *templateDir in [fm contentsOfDirectoryAtPath:templatePath error:nil]) {
+		processTemplate([templatePath stringByAppendingPathComponent:templateDir], templateOutputDir, bundleRoot);
+	}
+	
+}
+
 
 
