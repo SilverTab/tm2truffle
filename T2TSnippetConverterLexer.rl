@@ -1,4 +1,6 @@
-#include "T2TSnippetConverterLexer.h"
+#import "T2TSnippetConverterLexer.h"
+#import "T2TSnippetConverterParser.h"
+#import "T2TSnippetConverterShared.h"
 
 %%{
 	machine TMSnippetToChocolatSnippet;
@@ -6,8 +8,8 @@
 }%%
 
 %%{
-regex_string = ([^/\\] | "\\\\" | "\\/" | "\\" [^/\\])+
-regex = "/" regex_string "/" regex_string ("/" alnum*)?
+regex_string = ([^/\\] | "\\\\" | "\\/" | "\\" [^/\\])+;
+regex = "/" regex_string "/" regex_string ("/" alnum*)?;
 
 main := |*
 	"\\$" { emit_char('$'); };
@@ -23,7 +25,7 @@ main := |*
 	(alpha | '_') (alnum | '_')+ { emit(IDENTIFIER); };
 	digit+ { emit(NUMERIC); };
 
-	"`" ([^`] | "\\`")* "`" { emit_shell() };
+	"`" ([^`] | "\\`")* "`" { emit_shell(); };
 *|;
 }%%
 
@@ -38,21 +40,29 @@ void emit(int code)
 	printf("EMIT CODE %d", code);
 }
 
+void emit_shell()
+{
+	printf("EMIT SHELL");
+}
+
 
 NSString *T2TConvertTextMateSnippetToChocolat(NSString *tmSnippet)
 {
 	//Get string data
-	char* data = [tmSnippet UTF8String];
+	char* data = (char *)[tmSnippet UTF8String];
 	
 	//Start
-	const char *p = (const char *)data;
+	char *p = data;
 	
 	//End
-	const char *pe = (const char *)data + strlen(data);
-	const char *eof = pe;
+	char *pe = p + strlen(p);
+	char *eof = pe;
 	
 	//State
-	int cs = 0;
+	//static char buf[BUFSIZE];
+	int cs = 0, act, have = 0, curline = 1;
+	char *ts, *te = 0;
+	int done = 0;
 	
 	//Run the machine
 	%% write init;

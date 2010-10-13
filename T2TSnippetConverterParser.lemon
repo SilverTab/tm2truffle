@@ -1,11 +1,9 @@
 %include {
 #import <Foundation/Foundation.h>
+#import "T2TSnippetConverterShared.h"
 }
 
-
-
-%token_type {id}
-%token_prefix CSL_
+%token_type {T2TSnippetToken}
 
 %extra_argument {id rootObject}
 
@@ -14,10 +12,11 @@
 }
 
 
+main ::= root.
 
-main ::= tabstop.
-main ::= variable.
-main ::= verbatim.
+root ::= tabstop.
+root ::= variable.
+root ::= verbatim.
 
 tabstop ::= DOLLAR NUMERIC.
 tabstop ::= DOLLAR_CURLY TABSTOP_NUMBER misc CURLY.
@@ -25,6 +24,8 @@ tabstop ::= DOLLAR_CURLY TABSTOP_NUMBER misc CURLY.
 variable ::= DOLLAR IDENTIFIER.
 variable ::= DOLLAR_CURLY VARIABLE_IDENT misc CURLY.
 
-misc ::= COLON main.
+misc ::= COLON root.
 misc ::= REGEX.
 misc ::= .
+
+verbatim ::= CHAR | DOLLAR_CURLY | DOLLAR | COLON | CURLY | REGEX | IDENTIFIER | NUMERIC.

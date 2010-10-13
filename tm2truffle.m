@@ -1,11 +1,14 @@
 #import <Foundation/Foundation.h>
 #import "utils.h"
+#import "T2TSnippetConverterLexer.h"
 
 int main (int argc, const char * argv[]) {
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	NSString *pathToBundle;
 	NSString *outputPath;
-    
+	
+	NSLog(@"Output: %@", T2TConvertTextMateSnippetToChocolat(@"foo bar ${1:baz $TM_CURRENT_LINE} wobble"));
+    return;
 	// Very thorough argument checking...
 	if(argc != 3) {
 		NSLog(@"Only 2 argument are required, the input path...and output path kthxbye");
