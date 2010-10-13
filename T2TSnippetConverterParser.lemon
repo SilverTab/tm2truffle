@@ -1,0 +1,30 @@
+%include {
+#import <Foundation/Foundation.h>
+}
+
+
+
+%token_type {id}
+%token_prefix CSL_
+
+%extra_argument {id rootObject}
+
+%syntax_error {
+	printf("Syntax error\n");
+}
+
+
+
+main ::= tabstop.
+main ::= variable.
+main ::= verbatim.
+
+tabstop ::= DOLLAR NUMERIC.
+tabstop ::= DOLLAR_CURLY TABSTOP_NUMBER misc CURLY.
+
+variable ::= DOLLAR IDENTIFIER.
+variable ::= DOLLAR_CURLY VARIABLE_IDENT misc CURLY.
+
+misc ::= COLON main.
+misc ::= REGEX.
+misc ::= .

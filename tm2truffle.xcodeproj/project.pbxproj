@@ -10,6 +10,7 @@
 		0C91C7BE1258FA3D00B8532C /* self-ml.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C91C7BD1258FA3D00B8532C /* self-ml.framework */; };
 		0C947CD41259778C00CF0FF0 /* self-ml.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0C91C7BD1258FA3D00B8532C /* self-ml.framework */; };
 		0CB57A2912553F9F00F117F0 /* utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 0CB57A2812553F9F00F117F0 /* utils.m */; };
+		753785D312663E5900676EB6 /* T2TSnippetConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = 753785D212663E5900676EB6 /* T2TSnippetConverter.m */; };
 		8DD76F9A0486AA7600D96B5E /* tm2truffle.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FB7796FE84155DC02AAC07 /* tm2truffle.m */; settings = {ATTRIBUTES = (); }; };
 		8DD76F9C0486AA7600D96B5E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08FB779EFE84155DC02AAC07 /* Foundation.framework */; };
 		8DD76F9F0486AA7600D96B5E /* tm2truffle.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6859EA3029092ED04C91782 /* tm2truffle.1 */; };
@@ -45,6 +46,11 @@
 		0CB57A2712553F9400F117F0 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
 		0CB57A2812553F9F00F117F0 /* utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = utils.m; sourceTree = "<group>"; };
 		32A70AAB03705E1F00C91783 /* tm2truffle_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tm2truffle_Prefix.pch; sourceTree = "<group>"; };
+		753785D112663E5900676EB6 /* T2TSnippetConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = T2TSnippetConverter.h; sourceTree = "<group>"; };
+		753785D212663E5900676EB6 /* T2TSnippetConverter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = T2TSnippetConverter.m; sourceTree = "<group>"; };
+		753785D612663E7D00676EB6 /* T2TSnippetConverterLexer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = T2TSnippetConverterLexer.h; sourceTree = "<group>"; };
+		753785D712663E7D00676EB6 /* T2TSnippetConverterLexer.rl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = T2TSnippetConverterLexer.rl; sourceTree = "<group>"; };
+		753785DA12663ED900676EB6 /* T2TSnippetConverterParser.lemon */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = T2TSnippetConverterParser.lemon; sourceTree = "<group>"; };
 		8DD76FA10486AA7600D96B5E /* tm2truffle */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tm2truffle; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6859EA3029092ED04C91782 /* tm2truffle.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = tm2truffle.1; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -80,6 +86,11 @@
 				08FB7796FE84155DC02AAC07 /* tm2truffle.m */,
 				0CB57A2712553F9400F117F0 /* utils.h */,
 				0CB57A2812553F9F00F117F0 /* utils.m */,
+				753785D112663E5900676EB6 /* T2TSnippetConverter.h */,
+				753785D212663E5900676EB6 /* T2TSnippetConverter.m */,
+				753785D612663E7D00676EB6 /* T2TSnippetConverterLexer.h */,
+				753785D712663E7D00676EB6 /* T2TSnippetConverterLexer.rl */,
+				753785DA12663ED900676EB6 /* T2TSnippetConverterParser.lemon */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -120,6 +131,7 @@
 				8DD76F9B0486AA7600D96B5E /* Frameworks */,
 				8DD76F9E0486AA7600D96B5E /* CopyFiles */,
 				0C947CDE1259779D00CF0FF0 /* CopyFiles */,
+				753785DD1266578F00676EB6 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -138,7 +150,6 @@
 			isa = PBXProject;
 			buildConfigurationList = 1DEB927808733DD40010E9CD /* Build configuration list for PBXProject "tm2truffle" */;
 			compatibilityVersion = "Xcode 3.1";
-			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -155,6 +166,22 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		753785DD1266578F00676EB6 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Generate the parser\n./lemon T2TSnippetConverterParser.lemon\nmv T2TSnippetConverterParser.c T2TSnippetConverterParser.m\n\n# Generate the lexer\n./ragel T2TSnippetConverterLexer.rl\nmv T2TSnippetConverterLexer.c T2TSnippetConverterLexer.m";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		8DD76F990486AA7600D96B5E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -162,6 +189,7 @@
 			files = (
 				8DD76F9A0486AA7600D96B5E /* tm2truffle.m in Sources */,
 				0CB57A2912553F9F00F117F0 /* utils.m in Sources */,
+				753785D312663E5900676EB6 /* T2TSnippetConverter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
