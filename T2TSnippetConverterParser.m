@@ -8,7 +8,16 @@
 
 #import <Foundation/Foundation.h>
 #import "T2TSnippetConverterShared.h"
-#line 12 "T2TSnippetConverterParser.c"
+
+#ifndef CHAR_PAYLOAD_TO_STRING
+#define CHAR_PAYLOAD_TO_STRING(p) ({ T2TSnippetToken tok = p; [[NSString alloc] initWithBytes:&(tok.payloadChar) length:1 encoding:NSUTF8StringEncoding]; })
+#endif
+
+#ifndef PAYLOAD_TO_STRING
+#define PAYLOAD_TO_STRING(p) ({ T2TSnippetToken tok = p; [[NSString alloc] initWithBytes:tok.payloadStart length:tok.payloadEnd - tok.payloadStart encoding:NSUTF8StringEncoding]; })
+#endif
+
+#line 21 "T2TSnippetConverterParser.c"
 /* Next is all token values, in a form suitable for use by makeheaders.
 ** This section will be null unless lemon is run with the -m switch.
 */
@@ -65,16 +74,17 @@
 typedef union {
   int yyinit;
   ParseTOKENTYPE yy0;
+  NSString* yy19;
 } YYMINORTYPE;
 #ifndef YYSTACKDEPTH
 #define YYSTACKDEPTH 100
 #endif
-#define ParseARG_SDECL id rootObject;
-#define ParseARG_PDECL ,id rootObject
-#define ParseARG_FETCH id rootObject = yypParser->rootObject
-#define ParseARG_STORE yypParser->rootObject = rootObject
-#define YYNSTATE 26
-#define YYNRULE 12
+#define ParseARG_SDECL NSMutableString *output;
+#define ParseARG_PDECL ,NSMutableString *output
+#define ParseARG_FETCH NSMutableString *output = yypParser->output
+#define ParseARG_STORE yypParser->output = output
+#define YYNSTATE 29
+#define YYNRULE 24
 #define YY_NO_ACTION      (YYNSTATE+YYNRULE+2)
 #define YY_ACCEPT_ACTION  (YYNSTATE+YYNRULE+1)
 #define YY_ERROR_ACTION   (YYNSTATE+YYNRULE)
@@ -144,32 +154,33 @@ static const YYMINORTYPE yyzerominor = { 0 };
 **  yy_default[]       Default action for each state.
 */
 static const YYACTIONTYPE yy_action[] = {
- /*     0 */     8,    7,   39,   12,   17,   18,   19,    8,    1,   25,
- /*    10 */    23,   17,   18,   19,   10,    2,   11,   20,    3,    4,
- /*    20 */     4,   21,    5,    8,    6,    5,   24,   13,    6,    9,
- /*    30 */    14,   13,    7,    9,   26,   22,   15,   16,
+ /*     0 */    29,    6,   28,    5,   19,   21,   20,   16,   17,   18,
+ /*    10 */     6,   28,    5,   19,   21,   20,   16,   17,   18,   54,
+ /*    20 */     1,   14,   22,   24,   23,   25,   12,   22,   24,   23,
+ /*    30 */    25,    3,   26,    8,    2,   27,    4,   11,    7,   13,
+ /*    40 */    15,    9,   10,
 };
 static const YYCODETYPE yy_lookahead[] = {
- /*     0 */    11,   11,   13,   14,   15,   16,   17,   11,    8,    9,
- /*    10 */    14,   15,   16,   17,    1,    4,    3,    2,    7,    9,
- /*    20 */    11,    6,    3,   10,    8,   11,    2,    6,   11,    1,
- /*    30 */    18,   11,    5,   11,    0,    5,   18,    5,
+ /*     0 */     0,    1,    2,    3,    4,    5,    6,    7,    8,    9,
+ /*    10 */     1,    2,    3,    4,    5,    6,    7,    8,    9,   11,
+ /*    20 */    12,   13,   14,   15,   16,   17,   13,   14,   15,   16,
+ /*    30 */    17,    2,    2,   18,    5,    5,    7,    6,   18,    4,
+ /*    40 */     4,   18,    4,
 };
 #define YY_SHIFT_USE_DFLT (-1)
-#define YY_SHIFT_MAX 15
+#define YY_SHIFT_MAX 9
 static const signed char yy_shift_ofst[] = {
- /*     0 */    13,   13,    0,    0,   21,   28,   27,   10,   19,   16,
- /*    10 */    15,   11,   34,   24,   30,   32,
+ /*     0 */     9,    0,   31,   31,   31,   29,   30,   36,   38,   35,
 };
-#define YY_REDUCE_USE_DFLT (-12)
-#define YY_REDUCE_MAX 9
+#define YY_REDUCE_USE_DFLT (-1)
+#define YY_REDUCE_MAX 4
 static const signed char yy_reduce_ofst[] = {
- /*     0 */   -11,   -4,   12,   18,   20,   22,  -10,    9,   14,   17,
+ /*     0 */     8,   13,   23,   15,   20,
 };
 static const YYACTIONTYPE yy_default[] = {
- /*     0 */    38,   38,   36,   36,   38,   38,   38,   38,   38,   38,
- /*    10 */    38,   38,   38,   38,   38,   38,   33,   27,   28,   29,
- /*    20 */    30,   32,   31,   34,   37,   35,
+ /*     0 */    32,   53,   42,   42,   42,   46,   47,   53,   53,   53,
+ /*    10 */    38,   41,   30,   40,   31,   44,   43,   45,   48,   49,
+ /*    20 */    50,   51,   33,   35,   34,   36,   37,   39,   52,
 };
 #define YY_SZ_ACTTAB (int)(sizeof(yy_action)/sizeof(yy_action[0]))
 
@@ -264,10 +275,10 @@ void ParseTrace(FILE *TraceFILE, char *zTracePrompt){
 ** are required.  The following table supplies these names */
 static const char *const yyTokenName[] = { 
   "$",             "DOLLAR",        "NUMERIC",       "DOLLAR_CURLY",
-  "TABSTOP_NUMBER",  "CURLY",         "IDENTIFIER",    "VARIABLE_IDENT",
-  "COLON",         "REGEX",         "CHAR",          "",            
-  "error",         "main",          "root",          "tabstop",     
-  "variable",      "verbatim",      "misc",        
+  "CURLY",         "IDENTIFIER",    "REGEX",         "SHELL",       
+  "CHAR",          "COLON",         "error",         "main",        
+  "root",          "root_inner",    "tabstop",       "variable",    
+  "shell",         "verbatim",      "misc",        
 };
 #endif /* NDEBUG */
 
@@ -276,17 +287,29 @@ static const char *const yyTokenName[] = {
 */
 static const char *const yyRuleName[] = {
  /*   0 */ "main ::= root",
- /*   1 */ "root ::= tabstop",
- /*   2 */ "root ::= variable",
- /*   3 */ "root ::= verbatim",
- /*   4 */ "tabstop ::= DOLLAR NUMERIC",
- /*   5 */ "tabstop ::= DOLLAR_CURLY TABSTOP_NUMBER misc CURLY",
- /*   6 */ "variable ::= DOLLAR IDENTIFIER",
- /*   7 */ "variable ::= DOLLAR_CURLY VARIABLE_IDENT misc CURLY",
- /*   8 */ "misc ::= COLON root",
- /*   9 */ "misc ::= REGEX",
- /*  10 */ "misc ::=",
- /*  11 */ "verbatim ::= CHAR| DOLLAR_CURLY| DOLLAR| COLON| CURLY| REGEX| IDENTIFIER| NUMERIC",
+ /*   1 */ "root ::= root root_inner",
+ /*   2 */ "root ::= root_inner",
+ /*   3 */ "root ::=",
+ /*   4 */ "root_inner ::= tabstop",
+ /*   5 */ "root_inner ::= variable",
+ /*   6 */ "root_inner ::= shell",
+ /*   7 */ "root_inner ::= verbatim",
+ /*   8 */ "tabstop ::= DOLLAR NUMERIC",
+ /*   9 */ "tabstop ::= DOLLAR_CURLY NUMERIC misc CURLY",
+ /*  10 */ "variable ::= DOLLAR IDENTIFIER",
+ /*  11 */ "variable ::= DOLLAR_CURLY IDENTIFIER misc CURLY",
+ /*  12 */ "misc ::= REGEX",
+ /*  13 */ "misc ::=",
+ /*  14 */ "shell ::= SHELL",
+ /*  15 */ "shell ::= DOLLAR_CURLY SHELL misc CURLY",
+ /*  16 */ "verbatim ::= CHAR",
+ /*  17 */ "verbatim ::= DOLLAR_CURLY",
+ /*  18 */ "verbatim ::= DOLLAR",
+ /*  19 */ "verbatim ::= COLON",
+ /*  20 */ "verbatim ::= CURLY",
+ /*  21 */ "verbatim ::= REGEX",
+ /*  22 */ "verbatim ::= IDENTIFIER",
+ /*  23 */ "verbatim ::= NUMERIC",
 };
 #endif /* NDEBUG */
 
@@ -591,18 +614,30 @@ static const struct {
   YYCODETYPE lhs;         /* Symbol on the left-hand side of the rule */
   unsigned char nrhs;     /* Number of right-hand side symbols in the rule */
 } yyRuleInfo[] = {
+  { 11, 1 },
+  { 12, 2 },
+  { 12, 1 },
+  { 12, 0 },
   { 13, 1 },
-  { 14, 1 },
-  { 14, 1 },
-  { 14, 1 },
+  { 13, 1 },
+  { 13, 1 },
+  { 13, 1 },
+  { 14, 2 },
+  { 14, 4 },
   { 15, 2 },
   { 15, 4 },
-  { 16, 2 },
-  { 16, 4 },
-  { 18, 2 },
   { 18, 1 },
   { 18, 0 },
-  { 17, 8 },
+  { 16, 1 },
+  { 16, 4 },
+  { 17, 1 },
+  { 17, 1 },
+  { 17, 1 },
+  { 17, 1 },
+  { 17, 1 },
+  { 17, 1 },
+  { 17, 1 },
+  { 17, 1 },
 };
 
 static void yy_accept(yyParser*);  /* Forward Declaration */
@@ -657,19 +692,124 @@ static void yy_reduce(
   **  #line <lineno> <thisfile>
   **     break;
   */
+      case 0: /* main ::= root */
+#line 25 "T2TSnippetConverterParser.lemon"
+{
+	NSLog(@"pre = %@", yymsp[0].minor.yy19);
+	NSLog(@"out = '%@'", output);
+    [output appendString:yymsp[0].minor.yy19]; }
+#line 702 "T2TSnippetConverterParser.c"
+        break;
+      case 1: /* root ::= root root_inner */
+#line 31 "T2TSnippetConverterParser.lemon"
+{
+	yygotominor.yy19 = [yymsp[-1].minor.yy19 stringByAppendingString:yymsp[0].minor.yy19];
+	NSLog(@"yygotominor.yy19 = %@", yygotominor.yy19); }
+#line 709 "T2TSnippetConverterParser.c"
+        break;
+      case 2: /* root ::= root_inner */
+#line 34 "T2TSnippetConverterParser.lemon"
+{
+	yygotominor.yy19 = yymsp[0].minor.yy19;
+	NSLog(@"yygotominor.yy19 = %@", yygotominor.yy19); }
+#line 716 "T2TSnippetConverterParser.c"
+        break;
+      case 3: /* root ::= */
+#line 37 "T2TSnippetConverterParser.lemon"
+{
+	yygotominor.yy19 = @""; }
+#line 722 "T2TSnippetConverterParser.c"
+        break;
+      case 4: /* root_inner ::= tabstop */
+      case 5: /* root_inner ::= variable */ yytestcase(yyruleno==5);
+      case 6: /* root_inner ::= shell */ yytestcase(yyruleno==6);
+      case 7: /* root_inner ::= verbatim */ yytestcase(yyruleno==7);
+#line 41 "T2TSnippetConverterParser.lemon"
+{
+	yygotominor.yy19 = yymsp[0].minor.yy19; }
+#line 731 "T2TSnippetConverterParser.c"
+        break;
+      case 8: /* tabstop ::= DOLLAR NUMERIC */
+#line 51 "T2TSnippetConverterParser.lemon"
+{
+	NSLog(@"TABSTOP");
+    yygotominor.yy19 = [NSString stringWithFormat:@"{%@}", PAYLOAD_TO_STRING(yymsp[0].minor.yy0)]; }
+#line 738 "T2TSnippetConverterParser.c"
+        break;
+      case 9: /* tabstop ::= DOLLAR_CURLY NUMERIC misc CURLY */
+#line 54 "T2TSnippetConverterParser.lemon"
+{
+	NSLog(@"TABSTOP 2");
+    yygotominor.yy19 = [NSString stringWithFormat:@"{%@%@}", PAYLOAD_TO_STRING(yymsp[-2].minor.yy0), yymsp[-1].minor.yy19]; }
+#line 745 "T2TSnippetConverterParser.c"
+        break;
+      case 10: /* variable ::= DOLLAR IDENTIFIER */
+#line 59 "T2TSnippetConverterParser.lemon"
+{
+	NSLog(@"VARIABLE");
+    yygotominor.yy19 = [NSString stringWithFormat:PAYLOAD_TO_STRING(yymsp[0].minor.yy0)]; }
+#line 752 "T2TSnippetConverterParser.c"
+        break;
+      case 11: /* variable ::= DOLLAR_CURLY IDENTIFIER misc CURLY */
+#line 62 "T2TSnippetConverterParser.lemon"
+{
+	NSLog(@"VARIABLE 2");
+    yygotominor.yy19 = [NSString stringWithFormat:@"{%@%@}", PAYLOAD_TO_STRING(yymsp[-2].minor.yy0), yymsp[-1].minor.yy19]; }
+#line 759 "T2TSnippetConverterParser.c"
+        break;
+      case 12: /* misc ::= REGEX */
+      case 14: /* shell ::= SHELL */ yytestcase(yyruleno==14);
+      case 21: /* verbatim ::= REGEX */ yytestcase(yyruleno==21);
+      case 22: /* verbatim ::= IDENTIFIER */ yytestcase(yyruleno==22);
+      case 23: /* verbatim ::= NUMERIC */ yytestcase(yyruleno==23);
+#line 69 "T2TSnippetConverterParser.lemon"
+{
+    yygotominor.yy19 = PAYLOAD_TO_STRING(yymsp[0].minor.yy0); }
+#line 769 "T2TSnippetConverterParser.c"
+        break;
+      case 13: /* misc ::= */
+#line 71 "T2TSnippetConverterParser.lemon"
+{
+    yygotominor.yy19 = @""; }
+#line 775 "T2TSnippetConverterParser.c"
+        break;
+      case 15: /* shell ::= DOLLAR_CURLY SHELL misc CURLY */
+#line 78 "T2TSnippetConverterParser.lemon"
+{
+    yygotominor.yy19 = [NSString stringWithFormat:@"{%@%@}", PAYLOAD_TO_STRING(yymsp[-2].minor.yy0), yymsp[-1].minor.yy19]; }
+#line 781 "T2TSnippetConverterParser.c"
+        break;
+      case 16: /* verbatim ::= CHAR */
+#line 82 "T2TSnippetConverterParser.lemon"
+{
+    yygotominor.yy19 = CHAR_PAYLOAD_TO_STRING(yymsp[0].minor.yy0); }
+#line 787 "T2TSnippetConverterParser.c"
+        break;
+      case 17: /* verbatim ::= DOLLAR_CURLY */
+#line 84 "T2TSnippetConverterParser.lemon"
+{
+    yygotominor.yy19 = @"${"; }
+#line 793 "T2TSnippetConverterParser.c"
+        break;
+      case 18: /* verbatim ::= DOLLAR */
+#line 86 "T2TSnippetConverterParser.lemon"
+{
+    yygotominor.yy19 = @"$"; }
+#line 799 "T2TSnippetConverterParser.c"
+        break;
+      case 19: /* verbatim ::= COLON */
+#line 88 "T2TSnippetConverterParser.lemon"
+{
+    yygotominor.yy19 = @":"; }
+#line 805 "T2TSnippetConverterParser.c"
+        break;
+      case 20: /* verbatim ::= CURLY */
+#line 90 "T2TSnippetConverterParser.lemon"
+{
+    yygotominor.yy19 = @"}"; }
+#line 811 "T2TSnippetConverterParser.c"
+        break;
       default:
-      /* (0) main ::= root */ yytestcase(yyruleno==0);
-      /* (1) root ::= tabstop */ yytestcase(yyruleno==1);
-      /* (2) root ::= variable */ yytestcase(yyruleno==2);
-      /* (3) root ::= verbatim */ yytestcase(yyruleno==3);
-      /* (4) tabstop ::= DOLLAR NUMERIC */ yytestcase(yyruleno==4);
-      /* (5) tabstop ::= DOLLAR_CURLY TABSTOP_NUMBER misc CURLY */ yytestcase(yyruleno==5);
-      /* (6) variable ::= DOLLAR IDENTIFIER */ yytestcase(yyruleno==6);
-      /* (7) variable ::= DOLLAR_CURLY VARIABLE_IDENT misc CURLY */ yytestcase(yyruleno==7);
-      /* (8) misc ::= COLON root */ yytestcase(yyruleno==8);
-      /* (9) misc ::= REGEX */ yytestcase(yyruleno==9);
-      /* (10) misc ::= */ yytestcase(yyruleno==10);
-      /* (11) verbatim ::= CHAR| DOLLAR_CURLY| DOLLAR| COLON| CURLY| REGEX| IDENTIFIER| NUMERIC */ yytestcase(yyruleno==11);
         break;
   };
   yygoto = yyRuleInfo[yyruleno].lhs;
@@ -729,10 +869,10 @@ static void yy_syntax_error(
 ){
   ParseARG_FETCH;
 #define TOKEN (yyminor.yy0)
-#line 10 "T2TSnippetConverterParser.lemon"
+#line 19 "T2TSnippetConverterParser.lemon"
 
 	printf("Syntax error\n");
-#line 736 "T2TSnippetConverterParser.c"
+#line 876 "T2TSnippetConverterParser.c"
   ParseARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }
 

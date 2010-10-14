@@ -1,10 +1,9 @@
 #define DOLLAR                          1
 #define NUMERIC                         2
 #define DOLLAR_CURLY                    3
-#define TABSTOP_NUMBER                  4
-#define CURLY                           5
-#define IDENTIFIER                      6
-#define VARIABLE_IDENT                  7
-#define COLON                           8
-#define REGEX                           9
-#define CHAR                           10
+#define CURLY                           4
+#define IDENTIFIER                      5
+#define REGEX                           6
+#define SHELL                           7
+#define CHAR                            8
+#define COLON                           9

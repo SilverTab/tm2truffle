@@ -7,8 +7,8 @@ int main (int argc, const char * argv[]) {
 	NSString *pathToBundle;
 	NSString *outputPath;
 	
-	NSLog(@"Output: %@", T2TConvertTextMateSnippetToChocolat(@"foo bar ${1:baz $TM_CURRENT_LINE} wobble"));
-    return;
+	NSLog(@"Output: %@", T2TConvertTextMateSnippetToChocolat(@"foo bar ${1} baz $TM_CURRENT_LINE wobble"));
+    return 0;
 	// Very thorough argument checking...
 	if(argc != 3) {
 		NSLog(@"Only 2 argument are required, the input path...and output path kthxbye");
