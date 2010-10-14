@@ -3,7 +3,7 @@
 #define DOLLAR_CURLY                    3
 #define CURLY                           4
 #define IDENTIFIER                      5
-#define REGEX                           6
-#define SHELL                           7
-#define CHAR                            8
-#define COLON                           9
+#define COLON                           6
+#define REGEX                           7
+#define SHELL                           8
+#define CHAR                            9

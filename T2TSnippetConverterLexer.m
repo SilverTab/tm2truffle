@@ -112,8 +112,6 @@ void emit_char(char c, void* lemon, NSMutableString *output)
 	token.payloadStart = NULL;
 	token.payloadEnd = NULL;
 	
-	printf("EMIT CHAR %c\n", c);
-
 	emit_to_lemon(token, lemon, output);
 }
 
@@ -125,15 +123,11 @@ void emit(int code, char* ts, char* te, void* lemon, NSMutableString *output)
 	token.payloadStart = ts;
 	token.payloadEnd = te;
 	
-	printf("EMIT CODE %d\n", code);
-
 	emit_to_lemon(token, lemon, output);
 }
 
 void emit_shell(void* lemon, NSMutableString *output)
 {
-	printf("EMIT SHELL\n");
-
 	T2TSnippetToken token;
 	token.type = SHELL;
 	token.payloadChar = '\0';
@@ -144,9 +138,7 @@ void emit_shell(void* lemon, NSMutableString *output)
 }
 
 void emit_regex(void* lemon, NSMutableString *output)
-{
-	printf("EMIT SHELL\n");
-	
+{	
 	T2TSnippetToken token;
 	token.type = REGEX;
 	token.payloadChar = '\0';
@@ -185,7 +177,7 @@ NSString *T2TConvertTextMateSnippetToChocolat(NSString *tmSnippet)
 	
 	//Run the machine
 	
-#line 189 "T2TSnippetConverterLexer.c"
+#line 181 "T2TSnippetConverterLexer.c"
 	{
 	cs = TMSnippetToChocolatSnippet_start;
 	ts = 0;
@@ -193,9 +185,9 @@ NSString *T2TConvertTextMateSnippetToChocolat(NSString *tmSnippet)
 	act = 0;
 	}
 
-#line 122 "T2TSnippetConverterLexer.rl"
+#line 114 "T2TSnippetConverterLexer.rl"
 	
-#line 199 "T2TSnippetConverterLexer.c"
+#line 191 "T2TSnippetConverterLexer.c"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -214,7 +206,7 @@ _resume:
 #line 1 "NONE"
 	{ts = p;}
 	break;
-#line 218 "T2TSnippetConverterLexer.c"
+#line 210 "T2TSnippetConverterLexer.c"
 		}
 	}
 
@@ -321,7 +313,7 @@ _eof_trans:
 	break;
 	case 12:
 #line 28 "T2TSnippetConverterLexer.rl"
-	{te = p+1;{ emit_shell(lemon, output); }}
+	{te = p+1;{ emit(SHELL, ts, te, lemon, output); }}
 	break;
 	case 13:
 #line 30 "T2TSnippetConverterLexer.rl"
@@ -333,7 +325,7 @@ _eof_trans:
 	break;
 	case 15:
 #line 23 "T2TSnippetConverterLexer.rl"
-	{te = p;p--;{ emit_regex(lemon, output); }}
+	{te = p;p--;{ emit(REGEX, ts, te, lemon, output); }}
 	break;
 	case 16:
 #line 25 "T2TSnippetConverterLexer.rl"
@@ -355,10 +347,10 @@ _eof_trans:
 #line 1 "NONE"
 	{	switch( act ) {
 	case 8:
-	{{p = ((te))-1;} emit_regex(lemon, output); }
+	{{p = ((te))-1;} emit(REGEX, ts, te, lemon, output); }
 	break;
 	case 11:
-	{{p = ((te))-1;} emit_shell(lemon, output); }
+	{{p = ((te))-1;} emit(SHELL, ts, te, lemon, output); }
 	break;
 	case 12:
 	{{p = ((te))-1;} emit_char((*p), lemon, output); }
@@ -366,7 +358,7 @@ _eof_trans:
 	}
 	}
 	break;
-#line 370 "T2TSnippetConverterLexer.c"
+#line 362 "T2TSnippetConverterLexer.c"
 		}
 	}
 
@@ -379,7 +371,7 @@ _again:
 #line 1 "NONE"
 	{ts = 0;}
 	break;
-#line 383 "T2TSnippetConverterLexer.c"
+#line 375 "T2TSnippetConverterLexer.c"
 		}
 	}
 
@@ -396,25 +388,21 @@ _again:
 
 	}
 
-#line 123 "T2TSnippetConverterLexer.rl"
+#line 115 "T2TSnippetConverterLexer.rl"
 		
 	//End lemon
 	T2TSnippetToken token;
 	Parse(lemon, 0, token, output);
 	ParseFree(lemon, free);
 	
-	NSLog(@"output string = %@", output);
+	NSLog(@"output %d string = %@", cs, output);
 	
 	//Error state
 	if (cs != 0)
 		return nil;
 	
-	//Deal with the output
-	
-	//Worked
-	
-	
-	return nil;
+	//Return the output
+	return output;
 }
 
 

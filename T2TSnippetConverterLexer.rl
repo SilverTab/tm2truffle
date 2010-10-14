@@ -20,12 +20,12 @@ main := |*
 	"$" { emit(DOLLAR, ts, te, lemon, output); };
 	":" { emit(COLON, ts, te, lemon, output); };
 	"}" { emit(CURLY, ts, te, lemon, output); };
-	regex { emit_regex(lemon, output); };
+	regex { emit(REGEX, ts, te, lemon, output); };
 
 	(alpha | '_') (alnum | '_')* { emit(IDENTIFIER, ts, te, lemon, output); };
 	digit+ { emit(NUMERIC, ts, te, lemon, output); };
 
-	"`" ([^`] | "\\`")* "`" { emit_shell(lemon, output); };
+	"`" ([^`] | "\\`")* "`" { emit(SHELL, ts, te, lemon, output); };
 	
 	any { emit_char(fc, lemon, output); };
 *|;
@@ -46,8 +46,6 @@ void emit_char(char c, void* lemon, NSMutableString *output)
 	token.payloadStart = NULL;
 	token.payloadEnd = NULL;
 	
-	printf("EMIT CHAR %c\n", c);
-
 	emit_to_lemon(token, lemon, output);
 }
 
@@ -59,15 +57,11 @@ void emit(int code, char* ts, char* te, void* lemon, NSMutableString *output)
 	token.payloadStart = ts;
 	token.payloadEnd = te;
 	
-	printf("EMIT CODE %d\n", code);
-
 	emit_to_lemon(token, lemon, output);
 }
 
 void emit_shell(void* lemon, NSMutableString *output)
 {
-	printf("EMIT SHELL\n");
-
 	T2TSnippetToken token;
 	token.type = SHELL;
 	token.payloadChar = '\0';
@@ -78,9 +72,7 @@ void emit_shell(void* lemon, NSMutableString *output)
 }
 
 void emit_regex(void* lemon, NSMutableString *output)
-{
-	printf("EMIT SHELL\n");
-	
+{	
 	T2TSnippetToken token;
 	token.type = REGEX;
 	token.payloadChar = '\0';
@@ -126,18 +118,14 @@ NSString *T2TConvertTextMateSnippetToChocolat(NSString *tmSnippet)
 	Parse(lemon, 0, token, output);
 	ParseFree(lemon, free);
 	
-	NSLog(@"output string = %@", output);
+	NSLog(@"output %d string = %@", cs, output);
 	
 	//Error state
 	if (cs != 0)
 		return nil;
 	
-	//Deal with the output
-	
-	//Worked
-	
-	
-	return nil;
+	//Return the output
+	return output;
 }
 
 

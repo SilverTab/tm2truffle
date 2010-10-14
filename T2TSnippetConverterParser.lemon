@@ -10,6 +10,15 @@
 #define PAYLOAD_TO_STRING(p) ({ T2TSnippetToken tok = p; [[NSString alloc] initWithBytes:tok.payloadStart length:tok.payloadEnd - tok.payloadStart encoding:NSUTF8StringEncoding]; })
 #endif
 
+#ifndef ESCAPE_SNIPPET_STRING
+#define ESCAPE_SNIPPET_STRING(s) ({ \
+	NSMutableString *newString = [s mutableCopy]; \
+	[newString replaceOccurrencesOfString:@"\"" withString:@"\\\"" options:NSLiteralSearch range:NSMakeRange(0, [newString length])]; \
+	[newString replaceOccurrencesOfString:@"\\" withString:@"\\\\" options:NSLiteralSearch range:NSMakeRange(0, [newString length])]; \
+	newString; \
+})
+#endif
+
 }
 
 %token_type {T2TSnippetToken}
@@ -22,8 +31,18 @@
 
 
 %type main {NSString*}
-main ::= root(x). {
+main ::= superroot(x). {
     [output appendString:x]; }
+
+%type superroot {NSString*}
+superroot(r) ::= root(r2) root_inner(i). {
+	r = [r2 stringByAppendingString:i]; }
+superroot(r) ::= superverbatim(v). {
+	r = v; }
+superroot(r) ::= root_inner(i). {
+	r = i; }
+superroot(r) ::= . {
+	r = @""; }
 
 %type root {NSString*}
 root(r) ::= root(r2) root_inner(i). {
@@ -51,13 +70,13 @@ tabstop(t) ::= DOLLAR_CURLY NUMERIC(n) misc(m) CURLY. {
 
 %type variable {NSString*}
 variable(v) ::= DOLLAR IDENTIFIER(n). {
-    v = [NSString stringWithFormat:PAYLOAD_TO_STRING(n)]; }
+    v = [NSString stringWithFormat:@"{%@}", PAYLOAD_TO_STRING(n)]; }
 variable(v) ::= DOLLAR_CURLY IDENTIFIER(n) misc(m) CURLY. {
     v = [NSString stringWithFormat:@"{%@%@}", PAYLOAD_TO_STRING(n), m]; }
 
 %type misc {NSString*}
-/*misc(m) ::= COLON root(r). {
-    m = r; }*/
+misc(m) ::= COLON root(r). {
+    m = [NSString stringWithFormat:@"=\"%@\"", ESCAPE_SNIPPET_STRING(r)]; }
 misc(m) ::= REGEX(r). {
     m = PAYLOAD_TO_STRING(r); }
 misc(m) ::= . {
@@ -70,6 +89,10 @@ shell(s1) ::= SHELL(s2). {
 shell(s1) ::= DOLLAR_CURLY SHELL(s2) misc(m) CURLY. {
     s1 = [NSString stringWithFormat:@"{%@%@}", PAYLOAD_TO_STRING(s2), m]; }
 
+%type superverbatim {NSString*}
+superverbatim(v) ::= CURLY. {
+    v = @"}"; }
+
 %type verbatim {NSString*}
 verbatim(v) ::= CHAR(c). {
     v = CHAR_PAYLOAD_TO_STRING(c); }
@@ -79,8 +102,6 @@ verbatim(v) ::= DOLLAR. {
     v = @"$"; }
 verbatim(v) ::= COLON. {
     v = @":"; }
-verbatim(v) ::= CURLY. {
-    v = @"}"; }
 verbatim(v) ::= REGEX(r). {
     v = PAYLOAD_TO_STRING(r); }
 verbatim(v) ::= IDENTIFIER(d). {
