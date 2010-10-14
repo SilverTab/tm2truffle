@@ -1,5 +1,7 @@
 #import "utils.h"
 #import <self-ml/SFONode.h>
+
+#import "T2TSnippetConverterShared.h"
 #import "T2TSnippetConverterLexer.h"
 
 #pragma mark -

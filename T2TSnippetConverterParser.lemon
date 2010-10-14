@@ -35,10 +35,8 @@ main ::= superroot(x). {
     [output appendString:x]; }
 
 %type superroot {NSString*}
-superroot(r) ::= root(r2) root_inner(i). {
+superroot(r) ::= superroot(r2) superroot_inner(i). {
 	r = [r2 stringByAppendingString:i]; }
-superroot(r) ::= superverbatim(v). {
-	r = v; }
 superroot(r) ::= root_inner(i). {
 	r = i; }
 superroot(r) ::= . {
@@ -51,6 +49,12 @@ root(r) ::= root_inner(i). {
 	r = i; }
 root(r) ::= . {
 	r = @""; }
+
+%type superroot_inner {NSString*}
+superroot_inner(i) ::= superverbatim(v). {
+	i = v; }
+superroot_inner(i) ::= root_inner(i2). {
+	i = i2; }
 
 %type root_inner {NSString*}
 root_inner(i) ::= tabstop(t). {
@@ -90,8 +94,8 @@ shell(s1) ::= DOLLAR_CURLY SHELL(s2) misc(m) CURLY. {
     s1 = [NSString stringWithFormat:@"{%@%@}", PAYLOAD_TO_STRING(s2), m]; }
 
 %type superverbatim {NSString*}
-superverbatim(v) ::= CURLY. {
-    v = @"}"; }
+superverbatim(v) ::= CURLY(c). {
+    v = PAYLOAD_TO_STRING(c); }
 
 %type verbatim {NSString*}
 verbatim(v) ::= CHAR(c). {

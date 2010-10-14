@@ -1,5 +1,6 @@
 #import <Foundation/Foundation.h>
 #import "utils.h"
+#import "T2TSnippetConverterShared.h"
 #import "T2TSnippetConverterLexer.h"
 
 int main (int argc, const char * argv[]) {
@@ -7,7 +8,8 @@ int main (int argc, const char * argv[]) {
 	NSString *pathToBundle;
 	NSString *outputPath;
 	
-	//NSLog(@"Output: %@", T2TConvertTextMateSnippetToChocolat(@"foo bar ${TM_SELECTED_TEXT/^.+$/• $0/g} ${1:$2 ${TM_CURRENT_LINE:3}} baz $TM_CURRENT_LINE wobble"));
+	//NSString *output = T2TConvertTextMateSnippetToChocolat(@"test!");
+	//NSLog(@"Main Output: %@", output);
     //return 0;
 	// Very thorough argument checking...
 	if(argc != 3) {

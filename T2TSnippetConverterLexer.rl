@@ -19,6 +19,7 @@ main := |*
 	"${" { emit(DOLLAR_CURLY, ts, te, lemon, output); };
 	"$" { emit(DOLLAR, ts, te, lemon, output); };
 	":" { emit(COLON, ts, te, lemon, output); };
+	":}" { emit(CURLY, ts, te, lemon, output); };
 	"}" { emit(CURLY, ts, te, lemon, output); };
 	regex { emit(REGEX, ts, te, lemon, output); };
 
@@ -119,10 +120,6 @@ NSString *T2TConvertTextMateSnippetToChocolat(NSString *tmSnippet)
 	ParseFree(lemon, free);
 	
 	NSLog(@"output %d string = %@", cs, output);
-	
-	//Error state
-	if (cs != 0)
-		return nil;
 	
 	//Return the output
 	return output;

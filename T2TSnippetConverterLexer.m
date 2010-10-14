@@ -11,13 +11,13 @@ static const char _TMSnippetToChocolatSnippet_actions[] = {
 	7, 1, 8, 1, 9, 1, 10, 1, 
 	11, 1, 12, 1, 13, 1, 14, 1, 
 	15, 1, 16, 1, 17, 1, 18, 1, 
-	19, 1, 20, 2, 2, 3, 2, 2, 
-	4, 2, 2, 5
+	19, 1, 20, 1, 21, 2, 2, 3, 
+	2, 2, 4, 2, 2, 5
 };
 
 static const char _TMSnippetToChocolatSnippet_key_offsets[] = {
 	0, 2, 4, 4, 4, 6, 8, 20, 
-	21, 23, 25, 31, 33, 40, 43
+	21, 23, 25, 31, 33, 34, 41, 44
 };
 
 static const char _TMSnippetToChocolatSnippet_trans_keys[] = {
@@ -25,62 +25,62 @@ static const char _TMSnippetToChocolatSnippet_trans_keys[] = {
 	36, 47, 58, 92, 96, 125, 48, 57, 
 	65, 90, 95, 122, 123, 47, 92, 47, 
 	92, 48, 57, 65, 90, 97, 122, 48, 
-	57, 95, 48, 57, 65, 90, 97, 122, 
-	36, 92, 96, 92, 96, 0
+	57, 125, 95, 48, 57, 65, 90, 97, 
+	122, 36, 92, 96, 92, 96, 0
 };
 
 static const char _TMSnippetToChocolatSnippet_single_lengths[] = {
 	2, 2, 0, 0, 2, 2, 6, 1, 
-	2, 2, 0, 0, 1, 3, 2
+	2, 2, 0, 0, 1, 1, 3, 2
 };
 
 static const char _TMSnippetToChocolatSnippet_range_lengths[] = {
 	0, 0, 0, 0, 0, 0, 3, 0, 
-	0, 0, 3, 1, 3, 0, 0
+	0, 0, 3, 1, 0, 3, 0, 0
 };
 
 static const char _TMSnippetToChocolatSnippet_index_offsets[] = {
 	0, 3, 6, 7, 8, 11, 14, 24, 
-	26, 29, 32, 36, 38, 43, 47
+	26, 29, 32, 36, 38, 40, 45, 49
 };
 
 static const char _TMSnippetToChocolatSnippet_trans_targs[] = {
 	1, 3, 0, 6, 2, 9, 9, 0, 
-	5, 6, 4, 5, 14, 4, 7, 8, 
-	6, 13, 14, 6, 11, 12, 12, 6, 
+	5, 6, 4, 5, 15, 4, 7, 8, 
+	12, 14, 15, 6, 11, 13, 13, 6, 
 	6, 6, 6, 3, 0, 10, 2, 9, 
-	10, 10, 10, 6, 11, 6, 12, 12, 
-	12, 12, 6, 6, 6, 6, 6, 5, 
-	6, 4, 6, 6, 6, 6, 6, 6, 
+	10, 10, 10, 6, 11, 6, 6, 6, 
+	13, 13, 13, 13, 6, 6, 6, 6, 
+	6, 5, 6, 4, 6, 6, 6, 6, 
 	6, 6, 6, 6, 6, 6, 6, 6, 
-	0
+	6, 6, 6, 0
 };
 
 static const char _TMSnippetToChocolatSnippet_trans_actions[] = {
-	0, 0, 0, 31, 0, 35, 35, 0, 
-	0, 17, 0, 0, 38, 0, 0, 41, 
-	13, 0, 41, 15, 0, 0, 0, 19, 
-	11, 21, 29, 0, 0, 0, 0, 35, 
-	0, 0, 0, 23, 0, 27, 0, 0, 
-	0, 0, 25, 5, 7, 9, 29, 0, 
-	17, 0, 31, 31, 33, 31, 33, 33, 
-	21, 29, 23, 23, 27, 25, 29, 33, 
-	0
+	0, 0, 0, 33, 0, 37, 37, 0, 
+	0, 17, 0, 0, 40, 0, 0, 43, 
+	0, 0, 43, 15, 0, 0, 0, 19, 
+	11, 21, 31, 0, 0, 0, 0, 37, 
+	0, 0, 0, 25, 0, 29, 13, 23, 
+	0, 0, 0, 0, 27, 5, 7, 9, 
+	31, 0, 17, 0, 33, 33, 35, 33, 
+	35, 35, 21, 31, 25, 25, 29, 23, 
+	27, 31, 35, 0
 };
 
 static const char _TMSnippetToChocolatSnippet_to_state_actions[] = {
 	0, 0, 0, 0, 0, 0, 1, 0, 
-	0, 0, 0, 0, 0, 0, 0
+	0, 0, 0, 0, 0, 0, 0, 0
 };
 
 static const char _TMSnippetToChocolatSnippet_from_state_actions[] = {
 	0, 0, 0, 0, 0, 0, 3, 0, 
-	0, 0, 0, 0, 0, 0, 0
+	0, 0, 0, 0, 0, 0, 0, 0
 };
 
 static const char _TMSnippetToChocolatSnippet_eof_trans[] = {
-	54, 54, 64, 54, 64, 64, 0, 57, 
-	63, 60, 60, 61, 62, 63, 64
+	56, 56, 67, 56, 67, 67, 0, 59, 
+	66, 62, 62, 63, 64, 65, 66, 67
 };
 
 static const int TMSnippetToChocolatSnippet_start = 6;
@@ -94,7 +94,7 @@ static const int TMSnippetToChocolatSnippet_en_main = 6;
 
 
 
-#line 32 "T2TSnippetConverterLexer.rl"
+#line 33 "T2TSnippetConverterLexer.rl"
 
 
 
@@ -185,7 +185,7 @@ NSString *T2TConvertTextMateSnippetToChocolat(NSString *tmSnippet)
 	act = 0;
 	}
 
-#line 114 "T2TSnippetConverterLexer.rl"
+#line 115 "T2TSnippetConverterLexer.rl"
 	
 #line 191 "T2TSnippetConverterLexer.c"
 	{
@@ -276,16 +276,16 @@ _eof_trans:
 	{te = p+1;}
 	break;
 	case 3:
-#line 23 "T2TSnippetConverterLexer.rl"
-	{act = 8;}
+#line 24 "T2TSnippetConverterLexer.rl"
+	{act = 9;}
 	break;
 	case 4:
-#line 28 "T2TSnippetConverterLexer.rl"
-	{act = 11;}
+#line 29 "T2TSnippetConverterLexer.rl"
+	{act = 12;}
 	break;
 	case 5:
-#line 30 "T2TSnippetConverterLexer.rl"
-	{act = 12;}
+#line 31 "T2TSnippetConverterLexer.rl"
+	{act = 13;}
 	break;
 	case 6:
 #line 15 "T2TSnippetConverterLexer.rl"
@@ -304,19 +304,19 @@ _eof_trans:
 	{te = p+1;{ emit(DOLLAR_CURLY, ts, te, lemon, output); }}
 	break;
 	case 10:
-#line 21 "T2TSnippetConverterLexer.rl"
-	{te = p+1;{ emit(COLON, ts, te, lemon, output); }}
-	break;
-	case 11:
 #line 22 "T2TSnippetConverterLexer.rl"
 	{te = p+1;{ emit(CURLY, ts, te, lemon, output); }}
 	break;
+	case 11:
+#line 23 "T2TSnippetConverterLexer.rl"
+	{te = p+1;{ emit(CURLY, ts, te, lemon, output); }}
+	break;
 	case 12:
-#line 28 "T2TSnippetConverterLexer.rl"
+#line 29 "T2TSnippetConverterLexer.rl"
 	{te = p+1;{ emit(SHELL, ts, te, lemon, output); }}
 	break;
 	case 13:
-#line 30 "T2TSnippetConverterLexer.rl"
+#line 31 "T2TSnippetConverterLexer.rl"
 	{te = p+1;{ emit_char((*p), lemon, output); }}
 	break;
 	case 14:
@@ -324,41 +324,45 @@ _eof_trans:
 	{te = p;p--;{ emit(DOLLAR, ts, te, lemon, output); }}
 	break;
 	case 15:
-#line 23 "T2TSnippetConverterLexer.rl"
-	{te = p;p--;{ emit(REGEX, ts, te, lemon, output); }}
+#line 21 "T2TSnippetConverterLexer.rl"
+	{te = p;p--;{ emit(COLON, ts, te, lemon, output); }}
 	break;
 	case 16:
-#line 25 "T2TSnippetConverterLexer.rl"
-	{te = p;p--;{ emit(IDENTIFIER, ts, te, lemon, output); }}
+#line 24 "T2TSnippetConverterLexer.rl"
+	{te = p;p--;{ emit(REGEX, ts, te, lemon, output); }}
 	break;
 	case 17:
 #line 26 "T2TSnippetConverterLexer.rl"
-	{te = p;p--;{ emit(NUMERIC, ts, te, lemon, output); }}
+	{te = p;p--;{ emit(IDENTIFIER, ts, te, lemon, output); }}
 	break;
 	case 18:
-#line 30 "T2TSnippetConverterLexer.rl"
-	{te = p;p--;{ emit_char((*p), lemon, output); }}
+#line 27 "T2TSnippetConverterLexer.rl"
+	{te = p;p--;{ emit(NUMERIC, ts, te, lemon, output); }}
 	break;
 	case 19:
-#line 30 "T2TSnippetConverterLexer.rl"
-	{{p = ((te))-1;}{ emit_char((*p), lemon, output); }}
+#line 31 "T2TSnippetConverterLexer.rl"
+	{te = p;p--;{ emit_char((*p), lemon, output); }}
 	break;
 	case 20:
+#line 31 "T2TSnippetConverterLexer.rl"
+	{{p = ((te))-1;}{ emit_char((*p), lemon, output); }}
+	break;
+	case 21:
 #line 1 "NONE"
 	{	switch( act ) {
-	case 8:
+	case 9:
 	{{p = ((te))-1;} emit(REGEX, ts, te, lemon, output); }
 	break;
-	case 11:
+	case 12:
 	{{p = ((te))-1;} emit(SHELL, ts, te, lemon, output); }
 	break;
-	case 12:
+	case 13:
 	{{p = ((te))-1;} emit_char((*p), lemon, output); }
 	break;
 	}
 	}
 	break;
-#line 362 "T2TSnippetConverterLexer.c"
+#line 366 "T2TSnippetConverterLexer.c"
 		}
 	}
 
@@ -371,7 +375,7 @@ _again:
 #line 1 "NONE"
 	{ts = 0;}
 	break;
-#line 375 "T2TSnippetConverterLexer.c"
+#line 379 "T2TSnippetConverterLexer.c"
 		}
 	}
 
@@ -388,7 +392,7 @@ _again:
 
 	}
 
-#line 115 "T2TSnippetConverterLexer.rl"
+#line 116 "T2TSnippetConverterLexer.rl"
 		
 	//End lemon
 	T2TSnippetToken token;
@@ -396,10 +400,6 @@ _again:
 	ParseFree(lemon, free);
 	
 	NSLog(@"output %d string = %@", cs, output);
-	
-	//Error state
-	if (cs != 0)
-		return nil;
 	
 	//Return the output
 	return output;
