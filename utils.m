@@ -1,6 +1,6 @@
 #import "utils.h"
 #import <self-ml/SFONode.h>
-
+#import "T2TSnippetConverterLexer.h"
 
 #pragma mark -
 #pragma mark Metadata
@@ -69,10 +69,40 @@ int createOutputDir(NSString *outputFile)
 
 #pragma mark Snippets 
 
-void processSnippet(NSString *snippetPath)
+void processSnippet(NSString *snippetPath, outputPath)
 {
 	NSDictionary *snippetAsDic = [NSDictionary dictionaryWithContentsOfFile:snippetPath];
-	NSLog(@"%@", [snippetAsDic valueForKey:@"name"]);
+	NSString *newName = [[snippetPath lastPathComponent] stringByReplacingOccurrencesOfString:[snippetPath pathExtension] withString:@"selfml"];
+	SFONode *rootNode = [SFONode node];
+	SFONode *triggerNode = SELFML(@"trigger");
+	// name
+	if([snippetAsDic objectForKey:@"name"] != nil) {
+		SFONode *nameNode = SELFML(@"name", [snippetAsDic objectForKey:@"name"]);
+		[rootNode addChild:nameNode];
+	}
+	// tab trigger
+	if([snippetAsDic objectForKey:@"tabTrigger"] != nil) {
+		SFONode *tabNode = SELFML(@"tab", [snippetAsDic objectForKey:@"tabTrigger"]);
+		[triggerNode addChild:tabNode];
+	}
+	
+	[rootNode addChild:triggerNode];
+	
+	// scope
+	if([snippetAsDic objectForKey:@"scope"] != nil) {
+		SFONode *scopeNode = SELFML(@"only-in", [snippetAsDic objectForKey:@"scope"]);
+		[rootNode addChild:scopeNode];
+	}
+	
+	// content! Let's see if Alex Gordon is as smart as he appears to be!
+	if([snippetAsDic objectForKey:@"content"] != nil) {
+		NSString *convertedSnippet = T2TConvertTextMateSnippetToChocolat([snippetAsDic objectForKey:@"content"]);
+		SFONode *contentNode = SELFML(@"snippet", convertedSnippet);
+		[rootNode addChild:contentNode];
+	}
+	
+	
+	NSLog(@"%@", [rootNode selfmlRepresentation]);
 }
 
 void importSnippets(NSString *bundleRoot, NSString *outputFile)
@@ -96,7 +126,7 @@ void importSnippets(NSString *bundleRoot, NSString *outputFile)
 	}
 	
 	for(NSString *snippet in snippets) {
-		processSnippet([snippetsPath stringByAppendingPathComponent:snippet]);
+		processSnippet([snippetsPath stringByAppendingPathComponent:snippet], outputFile);
 	}
 	
 }

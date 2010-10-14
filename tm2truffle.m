@@ -38,7 +38,7 @@ int main (int argc, const char * argv[]) {
 	importCommands(pathToBundle, outputPath);
 	importTemplates(pathToBundle, outputPath);
 	// Good! Do something with it!
-	//importSnippets(pathToBundle, outputPath);
+	importSnippets(pathToBundle, outputPath);
 	[pool release];
     return 0;
 }
