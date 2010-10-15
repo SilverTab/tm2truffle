@@ -16,7 +16,7 @@ int importMetaData(NSString *bundleRoot, NSString *outputFile)
 		return 0;
 	}
 	SFONode *rootNode = [SFONode node];
-	NSDictionary *metaDic = [NSDictionary dictionaryWithContentsOfFile:metaDataPath];
+	NSDictionary *metaDic = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfFile:metaDataPath] options:0 format:nil error:nil];
 	
 	// provider...
 	NSString *provider;
@@ -68,18 +68,51 @@ int createOutputDir(NSString *outputFile)
 	return 1;
 }
 
+NSDictionary* loadPreferences(NSString *bundleRoot) {
+	// This function has one of the best variable name ever!
+	// Up to you to find it...
+	NSMutableDictionary *bigAssDic = [[NSMutableDictionary alloc] init];
+	NSString *prefPath = [bundleRoot stringByAppendingPathComponent:@"Preferences"];
+	for(NSString *prefFile in [[NSFileManager defaultManager] contentsOfDirectoryAtPath:prefPath error:nil]) {
+		NSDictionary *prefDic = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfFile:prefPath] 
+																		  options:0 
+																		   format:nil 
+																			error:nil];
+		[bigAssDic addEntriesFromDictionary:prefDic];
+	}
+	
+	// I was thinking about "prefPath" btw...
+	return bigAssDic;
+	
+}
 
-#pragma mark Snippets 
 
-void processSnippet(NSString *snippetPath, outputPath)
+#pragma mark -
+#pragma mark Booya
+void processIq(NSString *bundleRoot, NSString *outputFile) 
 {
-	NSDictionary *snippetAsDic = [NSDictionary dictionaryWithContentsOfFile:snippetPath];
+	NSDictionary *prefDic = loadPreferences(bundleRoot);
+	
+}
+
+
+#pragma mark -
+#pragma mark Snippets 
+void processSnippet(NSString *snippetPath, NSString *outputPath)
+{
+	NSDictionary *snippetAsDic = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfFile:snippetPath] 
+																		   options:0 
+																			format:nil 
+																			 error:nil];
+	
+	//NSDictionary *snippetAsDic = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfFile:snippetPath] options:0 format:nil error:nil];
 	NSString *newName = [[snippetPath lastPathComponent] stringByReplacingOccurrencesOfString:[snippetPath pathExtension] withString:@"selfml"];
 	SFONode *rootNode = [SFONode node];
 	SFONode *triggerNode = SELFML(@"trigger");
 	// name
 	if([snippetAsDic objectForKey:@"name"] != nil) {
 		SFONode *nameNode = SELFML(@"name", [snippetAsDic objectForKey:@"name"]);
+		NSLog(@"FUCKING NAME: %@", [snippetAsDic objectForKey:@"name"]);
 		[rootNode addChild:nameNode];
 	}
 	// tab trigger
@@ -99,12 +132,19 @@ void processSnippet(NSString *snippetPath, outputPath)
 	// content! Let's see if Alex Gordon is as smart as he appears to be!
 	if([snippetAsDic objectForKey:@"content"] != nil) {
 		NSString *convertedSnippet = T2TConvertTextMateSnippetToChocolat([snippetAsDic objectForKey:@"content"]);
+		if(convertedSnippet == nil)
+			return; // bail..fuck that snippet
 		SFONode *contentNode = SELFML(@"snippet", convertedSnippet);
 		[rootNode addChild:contentNode];
 	}
 	
-	
-	NSLog(@"%@", [rootNode selfmlRepresentation]);
+	// output to disk...
+	NSString *outputFile = [[outputPath stringByAppendingPathComponent:@"snippets"] stringByAppendingPathComponent:newName];
+	[[rootNode selfmlRepresentation] writeToFile:outputFile 
+									  atomically:YES 
+										encoding:NSUTF8StringEncoding 
+										   error:nil];
+	//NSLog(@"%@", [rootNode selfmlRepresentation]);
 }
 
 void importSnippets(NSString *bundleRoot, NSString *outputFile)
@@ -140,7 +180,7 @@ void processCommand(NSString *fullPath, NSString *outputPath)
 {
 	NSString *fileName = [[[fullPath lastPathComponent] lowercaseString] stringByReplacingOccurrencesOfString:@" " withString:@"-"];
 	NSString *fullFileName = [fileName stringByReplacingOccurrencesOfString:[fileName pathExtension] withString:@"selfml"];
-	NSDictionary *commandDic = [NSDictionary dictionaryWithContentsOfFile:fullPath];
+	NSDictionary *commandDic = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfFile:fullPath] options:0 format:nil error:nil];
 	NSString *fullOutputPath = [outputPath stringByAppendingPathComponent:fullFileName];
 	SFONode *rootNode = [SFONode node];
 	
@@ -249,7 +289,7 @@ void processPattern(NSDictionary *pattern, SFONode **rootNode) {
 		return;
 	}
 	
-
+	
 	if([pattern objectForKey:@"name"] != nil) {
 		nodePattern = SELFML(@"zone", [pattern objectForKey:@"name"]);
 	} else {
@@ -259,7 +299,7 @@ void processPattern(NSDictionary *pattern, SFONode **rootNode) {
 			[nodePattern addChild:innerIdentifier];
 		}
 	}
-
+	
 	
 	// match
 	if([pattern objectForKey:@"match"] != nil) {
@@ -344,7 +384,7 @@ void processPattern(NSDictionary *pattern, SFONode **rootNode) {
 
 void processLanguage(NSString *languagePath, NSString *outputPath)
 {
-	NSDictionary *languageAsDic = [NSDictionary dictionaryWithContentsOfFile:languagePath];
+	NSDictionary *languageAsDic = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfFile:languagePath] options:0 format:nil error:nil];
 	
 	NSString *bundleSourceName = [languageAsDic valueForKey:@"scopeName"];
 	NSMutableArray *components = [[bundleSourceName componentsSeparatedByString:@"."] mutableCopy];
@@ -359,6 +399,7 @@ void processLanguage(NSString *languagePath, NSString *outputPath)
 													error:nil];
 	
 	SFONode *rootNode = SELFML(@"root", [languageAsDic valueForKey:@"scopeName"]);
+	SFONode *ubberRootNode = [SFONode node];
 	
 	// patterns...
 	for(NSDictionary *pattern in [languageAsDic valueForKey:@"patterns"])
@@ -366,7 +407,27 @@ void processLanguage(NSString *languagePath, NSString *outputPath)
 		processPattern(pattern, &rootNode);
 	}
 	
-	[[rootNode selfmlRepresentation] writeToFile:[[outputPath stringByAppendingPathComponent:outputDirName] stringByAppendingPathComponent:@"syntax.selfml"] 
+	[ubberRootNode addChild:rootNode];
+	// collections/repo
+	for(NSString *repoKey in [languageAsDic objectForKey:@"repository"]) {
+		SFONode *collectionNode = SELFML(@"collection", repoKey);
+		NSDictionary *collectionDic = [[languageAsDic objectForKey:@"repository"] objectForKey:repoKey];
+		// is it the dumb exception?
+		if([[collectionDic allKeys] count] == 1 && [collectionDic objectForKey:@"patterns"] != nil) {
+			// yes it is!
+			for(NSDictionary *subzone in [collectionDic objectForKey:@"patterns"]) {
+				processPattern(subzone, &collectionNode);
+			}
+		} else {
+			processPattern(collectionDic, &collectionNode);
+		}
+		
+		
+		[ubberRootNode addChild:collectionNode];
+	}
+	
+	
+	[[ubberRootNode selfmlRepresentation] writeToFile:[[outputPath stringByAppendingPathComponent:outputDirName] stringByAppendingPathComponent:@"syntax.selfml"] 
 									  atomically:YES 
 										encoding:NSUTF8StringEncoding 
 										   error:nil];
@@ -379,7 +440,7 @@ void importLanguages(NSString *bundleRoot, NSString *outputFile)
 {
 	NSString *syntaxInPath = [bundleRoot stringByAppendingPathComponent:@"Syntaxes"];
 	NSString *syntaxOutPath = [outputFile stringByAppendingPathComponent:@"languages"];
-
+	
 	
 	// create the languages directory...
 	[[NSFileManager defaultManager] createDirectoryAtPath:syntaxOutPath
@@ -406,7 +467,7 @@ void copyResources(NSString *bundleRoot, NSString *outputFile)
 	if(![[NSFileManager defaultManager] fileExistsAtPath:supportDir]) 
 		return;
 	
-
+	
 	[[NSFileManager defaultManager] copyItemAtPath:supportDir toPath:destinationPath error:nil];
 	
 	
@@ -414,17 +475,58 @@ void copyResources(NSString *bundleRoot, NSString *outputFile)
 
 #pragma mark -
 #pragma mark Templates
+void processTemplateFile(NSString *fullPath, SFONode **rootNode, BOOL isPrimary) 
+{
+	NSString *fileName = [fullPath lastPathComponent];
+	NSString *displayName = [fileName stringByDeletingPathExtension];
+	NSString *fileContent = [NSString stringWithContentsOfFile:fullPath encoding:NSUTF8StringEncoding error:nil];
+	NSString *convertedContent = T2TConvertTextMateSnippetToChocolat(fileContent);
+	SFONode *fileNode;
+	if(isPrimary) {
+		fileNode = SELFML(@"file.primary");
+	} else {
+		fileNode = SELFML(@"file");
+	}
+	//name
+	SFONode *nameNode = SELFML(@"name", displayName);
+	[fileNode addChild:nameNode];
+	
+	//file name
+	SFONode *filenameNode = SELFML(@"filename", fileName);
+	[fileNode addChild:filenameNode];
+	
+	//content
+	SFONode *contentNode = SELFML(@"contents", convertedContent);
+	[fileNode addChild:contentNode];
+	
+	
+	[*rootNode addChild:fileNode];
+}
+
+
 void processTemplate(NSString *fullPath, NSString *outputDir, NSString *bundleRoot)
 {
 	// OK so, the info.plist contains the meta data about the template,
 	// every other file in there is an actual template!
 	SFONode *rootNode = [SFONode node];
-	NSDictionary *metaData = [NSDictionary dictionaryWithContentsOfFile:[fullPath stringByAppendingPathComponent:@"info.plist"]];
-	NSDictionary *bundleMetaData = [NSDictionary dictionaryWithContentsOfFile:[bundleRoot stringByAppendingPathComponent:@"info.plist"]];
+	NSDictionary *metaData = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfFile:[fullPath stringByAppendingPathComponent:@"info.plist"]]
+																	   options:0 
+																		format:nil 
+																		 error:nil];
+	
+	NSDictionary *bundleMetaData = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfFile:[bundleRoot stringByAppendingPathComponent:@"info.plist"]]
+																			 options:0 
+																			  format:nil 
+																			   error:nil];
+	
+	NSString *fileName;
 	// first the name!
 	if([metaData objectForKey:@"name"]) {
 		SFONode *nameNode = SELFML(@"name", [metaData valueForKey:@"name"]);
 		[rootNode addChild:nameNode];
+		fileName = [[metaData valueForKey:@"name"] stringByAppendingString:@".selfml"];
+	} else {
+		return;
 	}
 	// Group
 	SFONode *platformNode = SELFML(@"group.platform", @"Misc");
@@ -439,7 +541,23 @@ void processTemplate(NSString *fullPath, NSString *outputDir, NSString *bundleRo
 	}
 	[rootNode addChild:principleNode];
 	
-	NSLog(@"Template: %@", [rootNode selfmlRepresentation]);
+	// now process the template files...
+	int i = 0;
+	BOOL primary;
+	for(NSString *aFile in [[NSFileManager defaultManager] contentsOfDirectoryAtPath:fullPath error:nil]) {
+		if(![[aFile lowercaseString] isEqual:@"info.plist"]) {
+			processTemplateFile([fullPath stringByAppendingPathComponent:aFile], &rootNode, (i == 0) );
+			i++;
+		}
+	}
+	
+	
+	[[rootNode selfmlRepresentation] writeToFile:[outputDir stringByAppendingPathComponent:fileName] 
+									  atomically:YES 
+										encoding:NSUTF8StringEncoding 
+										   error:nil];
+	
+	//NSLog(@"Template: %@", [rootNode selfmlRepresentation]);
 }
 
 void importTemplates(NSString *bundleRoot, NSString *outputFile)
@@ -453,6 +571,8 @@ void importTemplates(NSString *bundleRoot, NSString *outputFile)
 		NSLog(@"No templates, continuing!");
 		return;
 	}
+	// create the template output dir...
+	[fm createDirectoryAtPath:templateOutputDir attributes:nil];
 	
 	// Get the full path and process it!
 	for(NSString *templateDir in [fm contentsOfDirectoryAtPath:templatePath error:nil]) {
