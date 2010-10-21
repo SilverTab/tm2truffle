@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0C3231E7126FAD3600CA3948 /* themeutils.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C3231E6126FAD3600CA3948 /* themeutils.m */; };
 		0C91C7BE1258FA3D00B8532C /* self-ml.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C91C7BD1258FA3D00B8532C /* self-ml.framework */; };
 		0C947CD41259778C00CF0FF0 /* self-ml.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0C91C7BD1258FA3D00B8532C /* self-ml.framework */; };
 		0CB57A2912553F9F00F117F0 /* utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 0CB57A2812553F9F00F117F0 /* utils.m */; };
@@ -43,6 +44,8 @@
 /* Begin PBXFileReference section */
 		08FB7796FE84155DC02AAC07 /* tm2truffle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = tm2truffle.m; sourceTree = "<group>"; };
 		08FB779EFE84155DC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		0C3231E5126FAD2000CA3948 /* themeutils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = themeutils.h; sourceTree = "<group>"; };
+		0C3231E6126FAD3600CA3948 /* themeutils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = themeutils.m; sourceTree = "<group>"; };
 		0C91C7BD1258FA3D00B8532C /* self-ml.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = "self-ml.framework"; sourceTree = "<group>"; };
 		0CB57A2712553F9400F117F0 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
 		0CB57A2812553F9F00F117F0 /* utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = utils.m; sourceTree = "<group>"; };
@@ -90,6 +93,8 @@
 				08FB7796FE84155DC02AAC07 /* tm2truffle.m */,
 				0CB57A2712553F9400F117F0 /* utils.h */,
 				0CB57A2812553F9F00F117F0 /* utils.m */,
+				0C3231E5126FAD2000CA3948 /* themeutils.h */,
+				0C3231E6126FAD3600CA3948 /* themeutils.m */,
 				753785FF12665ADF00676EB6 /* T2TSnippetConverterShared.h */,
 				753785F212665AAC00676EB6 /* T2TSnippetConverterLexer.h */,
 				753785F312665AAC00676EB6 /* T2TSnippetConverterLexer.m */,
@@ -205,6 +210,7 @@
 				0CB57A2912553F9F00F117F0 /* utils.m in Sources */,
 				753785F612665AAC00676EB6 /* T2TSnippetConverterLexer.m in Sources */,
 				753785F712665AAC00676EB6 /* T2TSnippetConverterParser.m in Sources */,
+				0C3231E7126FAD3600CA3948 /* themeutils.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

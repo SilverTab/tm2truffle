@@ -55,16 +55,20 @@ int importMetaData(NSString *bundleRoot, NSString *outputFile)
 #pragma mark Useful stuff
 int createOutputDir(NSString *outputFile) 
 {
-	NSError *error;
-	[[NSFileManager defaultManager] createDirectoryAtPath:outputFile 
-							  withIntermediateDirectories:YES 
-											   attributes:nil 
-													error:&error];
-	if(error) {
-		NSLog(@"%@", [error localizedDescription]);
-		return 0;
+	BOOL isDir;
+	if(! [[NSFileManager defaultManager] fileExistsAtPath:outputFile isDirectory:&isDir] || !isDir) {
+		NSError *error = nil;
+		[[NSFileManager defaultManager] createDirectoryAtPath:outputFile 
+								  withIntermediateDirectories:YES 
+												   attributes:nil 
+														error:&error];
+		if(error) {
+			NSLog(@"%@", [error localizedDescription]);
+			return 0;
+		}
+		
+		
 	}
-	
 	return 1;
 }
 
@@ -295,7 +299,7 @@ void processPattern(NSDictionary *pattern, SFONode **rootNode) {
 	} else {
 		nodePattern = SELFML(@"zone");
 		if([pattern objectForKey:@"contentName"] != nil) {
-			SFONode *innerIdentifier = SELFML(@"innerIdentifier", [pattern objectForKey:@"contentName"]);
+			SFONode *innerIdentifier = SELFML(@"inner-identifier", [pattern objectForKey:@"contentName"]);
 			[nodePattern addChild:innerIdentifier];
 		}
 	}

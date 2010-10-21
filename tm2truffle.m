@@ -1,7 +1,7 @@
 #import <Foundation/Foundation.h>
 #import "utils.h"
-#import "T2TSnippetConverterShared.h"
-#import "T2TSnippetConverterLexer.h"
+#import "themeutils.h"
+
 
 int main (int argc, const char * argv[]) {
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
@@ -24,23 +24,39 @@ int main (int argc, const char * argv[]) {
 		NSLog(@"That bundle does not exist!");
 		return 1;
 	}
-	// create output dir
-	if(!createOutputDir(outputPath)) {
-		NSLog(@"Could not create directories! Bailing...");
-		return 1;
+	
+	if([[[pathToBundle pathExtension] lowercaseString] isEqual:@"tmbundle"]) {
+		// create output dir
+		if(!createOutputDir(outputPath)) {
+			NSLog(@"Could not create directories! Bailing...");
+			return 1;
+		}
+		
+		if(!importMetaData(pathToBundle, outputPath)) {
+			return 1;
+		}
+		
+		
+		copyResources(pathToBundle, outputPath);
+		importLanguages(pathToBundle, outputPath);
+		importCommands(pathToBundle, outputPath);
+		importTemplates(pathToBundle, outputPath);
+		// Good! Do something with it!
+		importSnippets(pathToBundle, outputPath);
+	} else if([[[pathToBundle pathExtension] lowercaseString] isEqual:@"tmtheme"]) {
+		NSString *dirOutput = [outputPath stringByDeletingLastPathComponent];
+		if(!createOutputDir(dirOutput)) {
+			NSLog(@"Could not create directories! Bailing...");
+			return 1;
+		}
+		importTheme(pathToBundle, outputPath);
+		
+		
+	} else {
+		NSLog(@"Dude this is for bundles or themes... don't try to open random files with it..wtf man.. not cool");
 	}
 	
-	if(!importMetaData(pathToBundle, outputPath)) {
-		return 1;
-	}
 	
-	
-	copyResources(pathToBundle, outputPath);
-	importLanguages(pathToBundle, outputPath);
-	importCommands(pathToBundle, outputPath);
-	importTemplates(pathToBundle, outputPath);
-	// Good! Do something with it!
-	importSnippets(pathToBundle, outputPath);
 	[pool release];
     return 0;
 }
