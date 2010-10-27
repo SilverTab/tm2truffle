@@ -114,6 +114,6 @@ int importTheme(NSString *themeRoot, NSString *outputFile)
 		
 		
 	}
-	
-	NSLog(@"%@", [rootNode selfmlRepresentation]);
+	[[rootNode selfmlRepresentation] writeToFile:outputFile atomically:YES encoding:NSUTF8StringEncoding error:nil];
+	//NSLog(@"%@", [rootNode selfmlRepresentation]);
 }
