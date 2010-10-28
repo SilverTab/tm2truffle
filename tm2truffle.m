@@ -44,11 +44,6 @@ int main (int argc, const char * argv[]) {
 		// Good! Do something with it!
 		importSnippets(pathToBundle, outputPath);
 	} else if([[[pathToBundle pathExtension] lowercaseString] isEqual:@"tmtheme"]) {
-		NSString *dirOutput = [outputPath stringByDeletingLastPathComponent];
-		if(!createOutputDir(dirOutput)) {
-			NSLog(@"Could not create directories! Bailing...");
-			return 1;
-		}
 		importTheme(pathToBundle, outputPath);
 		
 		

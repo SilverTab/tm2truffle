@@ -1,6 +1,5 @@
 #import "themeutils.h"
-#import <self-ml/SFONode.h>
-
+#import "SFONode.h"
 
 void importDefaultZone(NSDictionary *zone, SFONode **rootNode) 
 {

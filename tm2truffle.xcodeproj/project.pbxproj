@@ -8,9 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		0C3231E7126FAD3600CA3948 /* themeutils.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C3231E6126FAD3600CA3948 /* themeutils.m */; };
-		0C91C7BE1258FA3D00B8532C /* self-ml.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C91C7BD1258FA3D00B8532C /* self-ml.framework */; };
-		0C947CD41259778C00CF0FF0 /* self-ml.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0C91C7BD1258FA3D00B8532C /* self-ml.framework */; };
 		0CB57A2912553F9F00F117F0 /* utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 0CB57A2812553F9F00F117F0 /* utils.m */; };
+		750126871278F9F000ACBF1C /* self-ml.c in Sources */ = {isa = PBXBuildFile; fileRef = 750126801278F9F000ACBF1C /* self-ml.c */; };
+		750126881278F9F000ACBF1C /* SFONode.m in Sources */ = {isa = PBXBuildFile; fileRef = 750126841278F9F000ACBF1C /* SFONode.m */; };
+		750126891278F9F000ACBF1C /* SFONodeChild.m in Sources */ = {isa = PBXBuildFile; fileRef = 750126861278F9F000ACBF1C /* SFONodeChild.m */; };
 		753785F612665AAC00676EB6 /* T2TSnippetConverterLexer.m in Sources */ = {isa = PBXBuildFile; fileRef = 753785F312665AAC00676EB6 /* T2TSnippetConverterLexer.m */; };
 		753785F712665AAC00676EB6 /* T2TSnippetConverterParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 753785F512665AAC00676EB6 /* T2TSnippetConverterParser.m */; };
 		8DD76F9A0486AA7600D96B5E /* tm2truffle.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FB7796FE84155DC02AAC07 /* tm2truffle.m */; settings = {ATTRIBUTES = (); }; };
@@ -19,16 +20,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		0C947CDE1259779D00CF0FF0 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				0C947CD41259778C00CF0FF0 /* self-ml.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		8DD76F9E0486AA7600D96B5E /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 8;
@@ -50,6 +41,12 @@
 		0CB57A2712553F9400F117F0 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
 		0CB57A2812553F9F00F117F0 /* utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = utils.m; sourceTree = "<group>"; };
 		32A70AAB03705E1F00C91783 /* tm2truffle_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tm2truffle_Prefix.pch; sourceTree = "<group>"; };
+		750126801278F9F000ACBF1C /* self-ml.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "self-ml.c"; sourceTree = "<group>"; };
+		750126811278F9F000ACBF1C /* self-ml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "self-ml.h"; sourceTree = "<group>"; };
+		750126831278F9F000ACBF1C /* SFONode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFONode.h; sourceTree = "<group>"; };
+		750126841278F9F000ACBF1C /* SFONode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFONode.m; sourceTree = "<group>"; };
+		750126851278F9F000ACBF1C /* SFONodeChild.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFONodeChild.h; sourceTree = "<group>"; };
+		750126861278F9F000ACBF1C /* SFONodeChild.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFONodeChild.m; sourceTree = "<group>"; };
 		753785D712663E7D00676EB6 /* T2TSnippetConverterLexer.rl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = T2TSnippetConverterLexer.rl; sourceTree = "<group>"; };
 		753785DA12663ED900676EB6 /* T2TSnippetConverterParser.lemon */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = T2TSnippetConverterParser.lemon; sourceTree = "<group>"; };
 		753785F212665AAC00676EB6 /* T2TSnippetConverterLexer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = T2TSnippetConverterLexer.h; sourceTree = "<group>"; };
@@ -67,7 +64,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8DD76F9C0486AA7600D96B5E /* Foundation.framework in Frameworks */,
-				0C91C7BE1258FA3D00B8532C /* self-ml.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -89,6 +85,8 @@
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				7501267F1278F9F000ACBF1C /* Source */,
+				750126821278F9F000ACBF1C /* Source */,
 				32A70AAB03705E1F00C91783 /* tm2truffle_Prefix.pch */,
 				08FB7796FE84155DC02AAC07 /* tm2truffle.m */,
 				0CB57A2712553F9400F117F0 /* utils.h */,
@@ -121,6 +119,28 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		7501267F1278F9F000ACBF1C /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				750126801278F9F000ACBF1C /* self-ml.c */,
+				750126811278F9F000ACBF1C /* self-ml.h */,
+			);
+			name = Source;
+			path = "self-ml/Implementations/C/Source";
+			sourceTree = "<group>";
+		};
+		750126821278F9F000ACBF1C /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				750126831278F9F000ACBF1C /* SFONode.h */,
+				750126841278F9F000ACBF1C /* SFONode.m */,
+				750126851278F9F000ACBF1C /* SFONodeChild.h */,
+				750126861278F9F000ACBF1C /* SFONodeChild.m */,
+			);
+			name = Source;
+			path = "self-ml/Implementations/Objective-C/Source";
+			sourceTree = "<group>";
+		};
 		753785FA12665ABB00676EB6 /* Other Source */ = {
 			isa = PBXGroup;
 			children = (
@@ -149,7 +169,6 @@
 				8DD76F990486AA7600D96B5E /* Sources */,
 				8DD76F9B0486AA7600D96B5E /* Frameworks */,
 				8DD76F9E0486AA7600D96B5E /* CopyFiles */,
-				0C947CDE1259779D00CF0FF0 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -210,6 +229,9 @@
 				753785F612665AAC00676EB6 /* T2TSnippetConverterLexer.m in Sources */,
 				753785F712665AAC00676EB6 /* T2TSnippetConverterParser.m in Sources */,
 				0C3231E7126FAD3600CA3948 /* themeutils.m in Sources */,
+				750126871278F9F000ACBF1C /* self-ml.c in Sources */,
+				750126881278F9F000ACBF1C /* SFONode.m in Sources */,
+				750126891278F9F000ACBF1C /* SFONodeChild.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
