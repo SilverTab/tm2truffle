@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		0C3231E7126FAD3600CA3948 /* themeutils.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C3231E6126FAD3600CA3948 /* themeutils.m */; };
+		0C683A3B127DCE3500C68FEC /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C683A3A127DCE3500C68FEC /* RegexKitLite.m */; };
+		0C683A3D127DCE5900C68FEC /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C683A3C127DCE5900C68FEC /* libicucore.dylib */; };
 		0CB57A2912553F9F00F117F0 /* utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 0CB57A2812553F9F00F117F0 /* utils.m */; };
 		750126871278F9F000ACBF1C /* self-ml.c in Sources */ = {isa = PBXBuildFile; fileRef = 750126801278F9F000ACBF1C /* self-ml.c */; };
 		750126881278F9F000ACBF1C /* SFONode.m in Sources */ = {isa = PBXBuildFile; fileRef = 750126841278F9F000ACBF1C /* SFONode.m */; };
@@ -37,6 +39,9 @@
 		08FB779EFE84155DC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		0C3231E5126FAD2000CA3948 /* themeutils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = themeutils.h; sourceTree = "<group>"; };
 		0C3231E6126FAD3600CA3948 /* themeutils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = themeutils.m; sourceTree = "<group>"; };
+		0C683A39127DCE3500C68FEC /* RegexKitLite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegexKitLite.h; sourceTree = "<group>"; };
+		0C683A3A127DCE3500C68FEC /* RegexKitLite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegexKitLite.m; sourceTree = "<group>"; };
+		0C683A3C127DCE5900C68FEC /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
 		0C91C7BD1258FA3D00B8532C /* self-ml.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = "self-ml.framework"; sourceTree = "<group>"; };
 		0CB57A2712553F9400F117F0 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
 		0CB57A2812553F9F00F117F0 /* utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = utils.m; sourceTree = "<group>"; };
@@ -64,6 +69,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8DD76F9C0486AA7600D96B5E /* Foundation.framework in Frameworks */,
+				0C683A3D127DCE5900C68FEC /* libicucore.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +84,7 @@
 				C6859EA2029092E104C91782 /* Documentation */,
 				08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */,
 				1AB674ADFE9D54B511CA2CBB /* Products */,
+				0C683A3C127DCE5900C68FEC /* libicucore.dylib */,
 			);
 			name = tm2truffle;
 			sourceTree = "<group>";
@@ -144,6 +151,8 @@
 		753785FA12665ABB00676EB6 /* Other Source */ = {
 			isa = PBXGroup;
 			children = (
+				0C683A39127DCE3500C68FEC /* RegexKitLite.h */,
+				0C683A3A127DCE3500C68FEC /* RegexKitLite.m */,
 				753785D712663E7D00676EB6 /* T2TSnippetConverterLexer.rl */,
 				753785DA12663ED900676EB6 /* T2TSnippetConverterParser.lemon */,
 			);
@@ -233,6 +242,7 @@
 				750126871278F9F000ACBF1C /* self-ml.c in Sources */,
 				750126881278F9F000ACBF1C /* SFONode.m in Sources */,
 				750126891278F9F000ACBF1C /* SFONodeChild.m in Sources */,
+				0C683A3B127DCE3500C68FEC /* RegexKitLite.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
