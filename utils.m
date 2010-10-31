@@ -348,6 +348,18 @@ void processPattern(NSDictionary *pattern, SFONode **rootNode) {
 			}
 		}
 		
+		// is there a captures node?
+		if([pattern objectForKey:@"captures"] != nil) {
+			NSDictionary *weirdCaptureDic = [pattern objectForKey:@"captures"];
+			
+			for(NSString *akey in [weirdCaptureDic allKeys]) {
+				if([akey intValue] || [akey isEqual:@"0"] || [akey isEqual:[NSNumber numberWithInt:0]]) {
+					SFONode *weirdCaptureNode = SELFML(akey, [[weirdCaptureDic valueForKey:akey] valueForKey:@"name"]);
+					[regexNode addChild:weirdCaptureNode];
+				}
+			}
+		}
+		
 		[nodePattern addChild:startNode];
 	}
 	if([pattern objectForKey:@"end"] != nil) {
@@ -365,6 +377,19 @@ void processPattern(NSDictionary *pattern, SFONode **rootNode) {
 				if([akey intValue] || [akey isEqual:@"0"] || [akey isEqual:[NSNumber numberWithInt:0]]) {
 					SFONode *captureNode = SELFML(akey, [[endCaptureDic valueForKey:akey] valueForKey:@"name"]);
 					[regexNode addChild:captureNode];
+				}
+			}
+		}
+		
+		
+		// is there a captures node?
+		if([pattern objectForKey:@"captures"] != nil) {
+			NSDictionary *weirdEndCaptureDic = [pattern objectForKey:@"captures"];
+			
+			for(NSString *akey in [weirdEndCaptureDic allKeys]) {
+				if([akey intValue] || [akey isEqual:@"0"] || [akey isEqual:[NSNumber numberWithInt:0]]) {
+					SFONode *weirdEndCaptureNode = SELFML(akey, [[weirdEndCaptureDic valueForKey:akey] valueForKey:@"name"]);
+					[regexNode addChild:weirdEndCaptureNode];
 				}
 			}
 		}
