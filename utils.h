@@ -5,5 +5,7 @@ void importLanguages(NSString *bundleRoot, NSString *outputFile);
 void copyResources(NSString *bundleRoot, NSString *outputFile);
 int importMetaData(NSString *bundleRoot, NSString *outputFile);
 void importTemplates(NSString *bundleRoot, NSString *outputFile);
+void importCommands(NSString *bundleRoot, NSString *outputFile);
+void processIq(NSString *bundleRoot, NSString *outputFile);
 
 int createOutputDir(NSString *outputFile);

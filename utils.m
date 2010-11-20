@@ -72,21 +72,19 @@ int createOutputDir(NSString *outputFile)
 	return 1;
 }
 
-NSDictionary* loadPreferences(NSString *bundleRoot) {
-	// This function has one of the best variable name ever!
-	// Up to you to find it...
-	NSMutableDictionary *bigAssDic = [[NSMutableDictionary alloc] init];
+NSMutableArray* loadPreferences(NSString *bundleRoot) {
+	NSMutableArray *prefArray = [[NSMutableArray alloc] init];
 	NSString *prefPath = [bundleRoot stringByAppendingPathComponent:@"Preferences"];
 	for(NSString *prefFile in [[NSFileManager defaultManager] contentsOfDirectoryAtPath:prefPath error:nil]) {
-		NSDictionary *prefDic = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfFile:prefPath] 
+		NSDictionary *prefDic = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfFile:[prefPath stringByAppendingPathComponent:prefFile]] 
 																		  options:0 
 																		   format:nil 
 																			error:nil];
-		[bigAssDic addEntriesFromDictionary:prefDic];
+		[prefArray addObject:prefDic];
 	}
 	
-	// I was thinking about "prefPath" btw...
-	return bigAssDic;
+	//NSLog(@"Prefs: %@", prefArray);
+	return prefArray;
 	
 }
 
@@ -201,8 +199,154 @@ SFONode *processRegex(NSString *regex, SFONode **parentNode)
 #pragma mark Booya
 void processIq(NSString *bundleRoot, NSString *outputFile) 
 {
-	NSDictionary *prefDic = loadPreferences(bundleRoot);
+	NSArray *prefArray = loadPreferences(bundleRoot);
+	// Should already exist
+	NSString *syntaxOutPath = [outputFile stringByAppendingPathComponent:@"languages"];
+	SFONode *rootNode = [SFONode node];
+	NSMutableDictionary *smartDict = [[NSMutableDictionary alloc] init];
+	NSMutableDictionary *highlightDict = [[NSMutableDictionary alloc] init];
 	
+	
+	for(NSDictionary *prefItem in prefArray) {
+		// if it's a completion, pass
+		if([[prefItem objectForKey:@"settings"] objectForKey:@"completions"] != nil) {
+			continue;
+		}
+		
+		if([[prefItem objectForKey:@"settings"] objectForKey:@"smartTypingPairs"] != nil || [[prefItem objectForKey:@"settings"] objectForKey:@"highlightPairs"] != nil) {
+			// pairs (.)(.)
+			if([[prefItem objectForKey:@"settings"] objectForKey:@"smartTypingPairs"] != nil) {
+				for (NSArray *pair in [[prefItem objectForKey:@"settings"] objectForKey:@"smartTypingPairs"]) {
+					// a smart pair!
+					[smartDict setObject:[pair objectAtIndex:1] forKey:[pair objectAtIndex:0]];
+				}
+			}
+			
+			if([[prefItem objectForKey:@"settings"] objectForKey:@"highlightPairs"] != nil) {
+				for (NSArray *pair in [[prefItem objectForKey:@"settings"] objectForKey:@"highlightPairs"]) {
+					// a smart pair!
+					[highlightDict setObject:[pair objectAtIndex:1] forKey:[pair objectAtIndex:0]];
+				}
+			}
+			
+			continue;
+			
+		}
+		
+		SFONode *ruleNode;
+		if([prefItem objectForKey:@"scope"] != nil) {
+			ruleNode = SELFML(@"in", [prefItem objectForKey:@"scope"]);
+		} else {
+			ruleNode = [SFONode node];
+		}
+		// identation!
+		if([[prefItem objectForKey:@"settings"] objectForKey:@"decreaseIndentPattern"] != nil) {
+			SFONode *dintentNode = SELFML(@"indentation.decrease", [[prefItem objectForKey:@"settings"] objectForKey:@"decreaseIndentPattern"]);
+			[ruleNode addChild:dintentNode];
+		}
+		
+		if([[prefItem objectForKey:@"settings"] objectForKey:@"increaseIndentPattern"] != nil) {
+			SFONode *intentNode = SELFML(@"indentation.increase", [[prefItem objectForKey:@"settings"] objectForKey:@"increaseIndentPattern"]);
+			[ruleNode addChild:intentNode];
+		}
+		
+		if([[prefItem objectForKey:@"settings"] objectForKey:@"indentNextLinePattern"] != nil) {
+			SFONode *intentNlNode = SELFML(@"indentation.increase-next-line-only", [[prefItem objectForKey:@"settings"] objectForKey:@"indentNextLinePattern"]);
+			[ruleNode addChild:intentNlNode];
+		}
+		
+		if([[prefItem objectForKey:@"settings"] objectForKey:@"unIndentedLinePattern"] != nil) {
+			SFONode *intentINode = SELFML(@"indentation.ignore-line", [[prefItem objectForKey:@"settings"] objectForKey:@"unIndentedLinePattern"]);
+			[ruleNode addChild:intentINode];
+		}
+		
+				
+		// symbol list
+		if([[prefItem objectForKey:@"settings"] objectForKey:@"showInSymbolList"] != nil) {
+			SFONode *symbolNode = SELFML(@"symbol-list");
+			
+			if([[prefItem objectForKey:@"settings"] objectForKey:@"symbolTransformation"] != nil) {
+				[symbolNode addChild:SELFML(@"transformation", [[prefItem objectForKey:@"settings"] objectForKey:@"symbolTransformation"])];
+			}
+			[ruleNode addChild:symbolNode];
+		}
+		
+		// Comments
+		if([[prefItem objectForKey:@"settings"] objectForKey:@"shellVariables"] != nil) {
+			NSMutableDictionary *commentDict = [[NSMutableDictionary alloc] init];
+			SFONode *shellVarNode = nil;
+			for(NSDictionary *aVar in [[prefItem objectForKey:@"settings"] objectForKey:@"shellVariables"]) {
+				if([[aVar objectForKey:@"name"] isEqual:@"TM_COMMENT_START"] || 
+				   [[aVar objectForKey:@"name"] isEqual:@"TM_COMMENT_END"] || 
+				   [[aVar objectForKey:@"name"] isEqual:@"TM_COMMENT_START_2"] || 
+				   [[aVar objectForKey:@"name"] isEqual:@"TM_COMMENT_END_2"]) {
+					[commentDict setObject:[aVar objectForKey:@"value"] forKey:[aVar objectForKey:@"name"]];
+				} else {
+					// it's a regular shell var
+					if(shellVarNode == nil) {
+						shellVarNode = SELFML(@"shell-variables");
+					}
+					[shellVarNode addChild:SELFML([aVar objectForKey:@"name"], [aVar objectForKey:@"value"])];
+				}
+			}
+			
+			if([commentDict objectForKey:@"TM_COMMENT_START"]) {
+				SFONode *commentNode;
+				if([commentDict objectForKey:@"TM_COMMENT_END"]) {
+					// it's multiline
+					commentNode = SELFML(@"comment.block", [commentDict objectForKey:@"TM_COMMENT_START"], [commentDict objectForKey:@"TM_COMMENT_END"]);
+				} else {
+					commentNode = SELFML(@"comment.line", [commentDict objectForKey:@"TM_COMMENT_START"]);
+				}
+				[ruleNode addChild:commentNode];
+
+			}
+			if([commentDict objectForKey:@"TM_COMMENT_START_2"]) {
+				SFONode *commentNode2;
+				if([commentDict objectForKey:@"TM_COMMENT_END_2"]) {
+					// it's multiline
+					commentNode2 = SELFML(@"comment.block", [commentDict objectForKey:@"TM_COMMENT_START_2"], [commentDict objectForKey:@"TM_COMMENT_END_2"]);
+				} else {
+					commentNode2 = SELFML(@"comment.line", [commentDict objectForKey:@"TM_COMMENT_START_2"]);
+				}
+				[ruleNode addChild:commentNode2];
+			}
+		}
+		
+		
+		[rootNode addChild:ruleNode];
+	}
+	
+	NSSet *keys = [[NSSet setWithArray:[smartDict allKeys]] setByAddingObjectsFromArray:[highlightDict allKeys]];
+	
+	for(NSString *key in keys) {
+		// get the value first
+		NSString *val;
+		BOOL addSmart = NO;
+		BOOL addHigh = NO;
+		
+		if([[smartDict allKeys] containsObject:key]) {
+			val = [smartDict objectForKey:key];
+			addSmart = YES;
+		} 
+		if ([[highlightDict allKeys] containsObject:key]) {
+			val = [highlightDict objectForKey:key];
+			addHigh = YES;
+		}
+		SFONode *pairNode = SELFML(@"pair", key, val);
+		if(addSmart) {
+			[pairNode addChild:SELFML(@"smart-typing")];
+		}
+		if(addHigh) {
+			[pairNode addChild:SELFML(@"(highlight)")];
+		}
+		[rootNode addChild:pairNode];
+		
+	}
+	
+	NSLog(@"Pair keys: %@", keys);
+	
+	NSLog(@"IQ: %@", [rootNode selfmlRepresentation]);
 }
 
 
