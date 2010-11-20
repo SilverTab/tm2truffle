@@ -2,11 +2,14 @@
 #import "utils.h"
 #import "themeutils.h"
 
+#import "T2TKeyEquivalentConverter.h"
 
 int main (int argc, const char * argv[]) {
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	NSString *pathToBundle;
 	NSString *outputPath;
+	
+	//NSLog(@"Key equiv: `%@`", T2TConvertKeyEquivalent([NSString stringWithFormat:@"$~%C", 0x0003]));
 	
 	//NSString *output = T2TConvertTextMateSnippetToChocolat(@"test!");
 	//NSLog(@"Main Output: %@", output);

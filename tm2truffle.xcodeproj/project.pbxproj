@@ -14,6 +14,7 @@
 		750126871278F9F000ACBF1C /* self-ml.c in Sources */ = {isa = PBXBuildFile; fileRef = 750126801278F9F000ACBF1C /* self-ml.c */; };
 		750126881278F9F000ACBF1C /* SFONode.m in Sources */ = {isa = PBXBuildFile; fileRef = 750126841278F9F000ACBF1C /* SFONode.m */; };
 		750126891278F9F000ACBF1C /* SFONodeChild.m in Sources */ = {isa = PBXBuildFile; fileRef = 750126861278F9F000ACBF1C /* SFONodeChild.m */; };
+		7519781F129855BE00FE3BB3 /* T2TKeyEquivalentConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = 7519781E129855BE00FE3BB3 /* T2TKeyEquivalentConverter.m */; };
 		753785F612665AAC00676EB6 /* T2TSnippetConverterLexer.m in Sources */ = {isa = PBXBuildFile; fileRef = 753785F312665AAC00676EB6 /* T2TSnippetConverterLexer.m */; };
 		753785F712665AAC00676EB6 /* T2TSnippetConverterParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 753785F512665AAC00676EB6 /* T2TSnippetConverterParser.m */; };
 		8DD76F9A0486AA7600D96B5E /* tm2truffle.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FB7796FE84155DC02AAC07 /* tm2truffle.m */; settings = {ATTRIBUTES = (); }; };
@@ -52,6 +53,8 @@
 		750126841278F9F000ACBF1C /* SFONode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFONode.m; sourceTree = "<group>"; };
 		750126851278F9F000ACBF1C /* SFONodeChild.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFONodeChild.h; sourceTree = "<group>"; };
 		750126861278F9F000ACBF1C /* SFONodeChild.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFONodeChild.m; sourceTree = "<group>"; };
+		7519781D129855BE00FE3BB3 /* T2TKeyEquivalentConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = T2TKeyEquivalentConverter.h; sourceTree = "<group>"; };
+		7519781E129855BE00FE3BB3 /* T2TKeyEquivalentConverter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = T2TKeyEquivalentConverter.m; sourceTree = "<group>"; };
 		753785D712663E7D00676EB6 /* T2TSnippetConverterLexer.rl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = T2TSnippetConverterLexer.rl; sourceTree = "<group>"; };
 		753785DA12663ED900676EB6 /* T2TSnippetConverterParser.lemon */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = T2TSnippetConverterParser.lemon; sourceTree = "<group>"; };
 		753785F212665AAC00676EB6 /* T2TSnippetConverterLexer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = T2TSnippetConverterLexer.h; sourceTree = "<group>"; };
@@ -105,6 +108,8 @@
 				753785F312665AAC00676EB6 /* T2TSnippetConverterLexer.m */,
 				753785F412665AAC00676EB6 /* T2TSnippetConverterParser.h */,
 				753785F512665AAC00676EB6 /* T2TSnippetConverterParser.m */,
+				7519781D129855BE00FE3BB3 /* T2TKeyEquivalentConverter.h */,
+				7519781E129855BE00FE3BB3 /* T2TKeyEquivalentConverter.m */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -196,7 +201,6 @@
 			isa = PBXProject;
 			buildConfigurationList = 1DEB927808733DD40010E9CD /* Build configuration list for PBXProject "tm2truffle" */;
 			compatibilityVersion = "Xcode 3.1";
-			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -243,6 +247,7 @@
 				750126881278F9F000ACBF1C /* SFONode.m in Sources */,
 				750126891278F9F000ACBF1C /* SFONodeChild.m in Sources */,
 				0C683A3B127DCE3500C68FEC /* RegexKitLite.m in Sources */,
+				7519781F129855BE00FE3BB3 /* T2TKeyEquivalentConverter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
