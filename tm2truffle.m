@@ -44,7 +44,7 @@ int main (int argc, const char * argv[]) {
 		importLanguages(pathToBundle, outputPath);
 		importCommands(pathToBundle, outputPath);
 		importTemplates(pathToBundle, outputPath);
-		processIq(pathToBundle, outputPath);
+		//processIq(pathToBundle, outputPath);
 		// Good! Do something with it!
 		importSnippets(pathToBundle, outputPath);
 	} else if([[[pathToBundle pathExtension] lowercaseString] isEqual:@"tmtheme"]) {

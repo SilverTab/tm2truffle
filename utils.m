@@ -197,48 +197,85 @@ SFONode *processRegex(NSString *regex, SFONode **parentNode)
 
 #pragma mark -
 #pragma mark Booya
-void processIq(NSString *bundleRoot, NSString *outputFile) 
+void processIq(NSString *bundleRoot, NSString *outputDir, NSString *rootScope)
 {
 	NSArray *prefArray = loadPreferences(bundleRoot);
-	// Should already exist
-	NSString *syntaxOutPath = [outputFile stringByAppendingPathComponent:@"languages"];
-	SFONode *rootNode = [SFONode node];
-	NSMutableDictionary *smartDict = [[NSMutableDictionary alloc] init];
-	NSMutableDictionary *highlightDict = [[NSMutableDictionary alloc] init];
 	
+	SFONode *rootNode = [SFONode node];
 	
 	for(NSDictionary *prefItem in prefArray) {
-		// if it's a completion, pass
-		if([[prefItem objectForKey:@"settings"] objectForKey:@"completions"] != nil) {
-			continue;
-		}
 		
-		if([[prefItem objectForKey:@"settings"] objectForKey:@"smartTypingPairs"] != nil || [[prefItem objectForKey:@"settings"] objectForKey:@"highlightPairs"] != nil) {
-			// pairs (.)(.)
-			if([[prefItem objectForKey:@"settings"] objectForKey:@"smartTypingPairs"] != nil) {
-				for (NSArray *pair in [[prefItem objectForKey:@"settings"] objectForKey:@"smartTypingPairs"]) {
-					// a smart pair!
-					[smartDict setObject:[pair objectAtIndex:1] forKey:[pair objectAtIndex:0]];
-				}
-			}
-			
-			if([[prefItem objectForKey:@"settings"] objectForKey:@"highlightPairs"] != nil) {
-				for (NSArray *pair in [[prefItem objectForKey:@"settings"] objectForKey:@"highlightPairs"]) {
-					// a smart pair!
-					[highlightDict setObject:[pair objectAtIndex:1] forKey:[pair objectAtIndex:0]];
-				}
-			}
-			
+		NSString *ruleScope = [prefItem objectForKey:@"scope"];
+		if (![ruleScope length])
 			continue;
-			
-		}
+		
+		NSRange range = [ruleScope rangeOfString:rootScope options:NSCaseInsensitiveSearch];
+		if (range.location != NSNotFound)
+			continue;
 		
 		SFONode *ruleNode;
-		if([prefItem objectForKey:@"scope"] != nil) {
+		if (range.location == 0 && range.length == [ruleScope length])
+			ruleNode = rootNode;
+		else
 			ruleNode = SELFML(@"in", [prefItem objectForKey:@"scope"]);
-		} else {
-			ruleNode = [SFONode node];
+		
+		
+		// if it's a completion, pass
+		if([[prefItem objectForKey:@"settings"] objectForKey:@"completions"] != nil) {
+			
 		}
+		
+		
+#pragma mark Pairing
+		NSMutableDictionary *smartDict = [[NSMutableDictionary alloc] init];
+		NSMutableDictionary *highlightDict = [[NSMutableDictionary alloc] init];
+		
+		// pairs (.)(.)
+		if([[prefItem objectForKey:@"settings"] objectForKey:@"smartTypingPairs"] != nil) {
+			for (NSArray *pair in [[prefItem objectForKey:@"settings"] objectForKey:@"smartTypingPairs"]) {
+				// a smart pair!
+				[smartDict setObject:[pair objectAtIndex:1] forKey:[pair objectAtIndex:0]];
+			}
+		}
+		
+		if([[prefItem objectForKey:@"settings"] objectForKey:@"highlightPairs"] != nil) {
+			for (NSArray *pair in [[prefItem objectForKey:@"settings"] objectForKey:@"highlightPairs"]) {
+				// a smart pair!
+				[highlightDict setObject:[pair objectAtIndex:1] forKey:[pair objectAtIndex:0]];
+			}
+		}
+		
+		NSSet *keys = [[NSSet setWithArray:[smartDict allKeys]] setByAddingObjectsFromArray:[highlightDict allKeys]];
+		
+		for(NSString *key in keys) {
+			// get the value first
+			NSString *val;
+			BOOL addSmart = NO;
+			BOOL addHigh = NO;
+			
+			if([[smartDict allKeys] containsObject:key]) {
+				val = [smartDict objectForKey:key];
+				addSmart = YES;
+			} 
+			if ([[highlightDict allKeys] containsObject:key]) {
+				val = [highlightDict objectForKey:key];
+				addHigh = YES;
+			}
+			SFONode *pairNode = SELFML(@"pair", key, val);
+			if(addSmart) {
+				[pairNode addChild:SELFML(@"smart-typing")];
+			}
+			if(addHigh) {
+				[pairNode addChild:SELFML(@"highlight")];
+			}
+			[ruleNode addChild:pairNode];
+			
+		}
+		
+
+
+#pragma mark Indentation
+		
 		// identation!
 		if([[prefItem objectForKey:@"settings"] objectForKey:@"decreaseIndentPattern"] != nil) {
 			SFONode *dintentNode = SELFML(@"indentation.decrease", [[prefItem objectForKey:@"settings"] objectForKey:@"decreaseIndentPattern"]);
@@ -314,39 +351,16 @@ void processIq(NSString *bundleRoot, NSString *outputFile)
 		}
 		
 		
-		[rootNode addChild:ruleNode];
+		if (ruleNode != rootNode)
+			[rootNode addChild:ruleNode];
 	}
-	
-	NSSet *keys = [[NSSet setWithArray:[smartDict allKeys]] setByAddingObjectsFromArray:[highlightDict allKeys]];
-	
-	for(NSString *key in keys) {
-		// get the value first
-		NSString *val;
-		BOOL addSmart = NO;
-		BOOL addHigh = NO;
 		
-		if([[smartDict allKeys] containsObject:key]) {
-			val = [smartDict objectForKey:key];
-			addSmart = YES;
-		} 
-		if ([[highlightDict allKeys] containsObject:key]) {
-			val = [highlightDict objectForKey:key];
-			addHigh = YES;
-		}
-		SFONode *pairNode = SELFML(@"pair", key, val);
-		if(addSmart) {
-			[pairNode addChild:SELFML(@"smart-typing")];
-		}
-		if(addHigh) {
-			[pairNode addChild:SELFML(@"(highlight)")];
-		}
-		[rootNode addChild:pairNode];
-		
-	}
-	
-	NSLog(@"Pair keys: %@", keys);
-	
 	NSLog(@"IQ: %@", [rootNode selfmlRepresentation]);
+	
+	[[rootNode selfmlRepresentation] writeToFile:[outputDir stringByAppendingPathComponent:@"iq.selfml"] 
+									  atomically:YES 
+										encoding:NSUTF8StringEncoding 
+										   error:nil];
 }
 
 
@@ -659,7 +673,7 @@ void processPattern(NSDictionary *pattern, SFONode **rootNode) {
 	[*rootNode addChild:nodePattern];
 }
 
-void processLanguage(NSString *languagePath, NSString *outputPath)
+void processLanguage(NSString *bundleRoot, NSString *languagePath, NSString *outputPath)
 {
 	NSDictionary *languageAsDic = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfFile:languagePath] options:0 format:nil error:nil];
 	
@@ -675,7 +689,11 @@ void processLanguage(NSString *languagePath, NSString *outputPath)
 											   attributes:nil 
 													error:nil];
 	
-	SFONode *rootNode = SELFML(@"root", [languageAsDic valueForKey:@"scopeName"]);
+	NSString *rootScope = [languageAsDic valueForKey:@"scopeName"];
+	if (![rootScope length])
+		return;
+	
+	SFONode *rootNode = SELFML(@"root", rootScope);
 	SFONode *ubberRootNode = [SFONode node];
 	
 	// patterns...
@@ -710,6 +728,8 @@ void processLanguage(NSString *languagePath, NSString *outputPath)
 										   error:nil];
 	
 	
+	processIq(bundleRoot, [outputPath stringByAppendingPathComponent:outputDirName], rootScope);
+	
 	//NSLog(@"Out: %@", [rootNode selfmlRepresentation]);
 }
 
@@ -727,7 +747,7 @@ void importLanguages(NSString *bundleRoot, NSString *outputFile)
 	
 	for(NSString *language in [[NSFileManager defaultManager] contentsOfDirectoryAtPath:syntaxInPath error:nil]) {
 		if([[[language pathExtension] lowercaseString] isEqual:@"tmlanguage"] || [[[language pathExtension] lowercaseString] isEqual:@"plist"]) {
-			processLanguage([syntaxInPath stringByAppendingPathComponent:language], syntaxOutPath);
+			processLanguage(bundleRoot, [syntaxInPath stringByAppendingPathComponent:language], syntaxOutPath);
 		}
 	}
 	
