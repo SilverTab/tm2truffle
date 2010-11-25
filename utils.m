@@ -197,11 +197,44 @@ SFONode *processRegex(NSString *regex, SFONode **parentNode)
 
 #pragma mark -
 #pragma mark Booya
-void processIq(NSString *bundleRoot, NSString *outputDir, NSString *rootScope)
+void processIq(NSString *bundleRoot, NSString *outputDir, NSString *rootScope, NSDictionary *languageDict)
 {
 	NSArray *prefArray = loadPreferences(bundleRoot);
-	
 	SFONode *rootNode = [SFONode node];
+	
+#pragma mark Detectors
+	if ([languageDict objectForKey:@"fileTypes"] != nil) {
+		SFONode *extDetectorNode = SELFML(@"detector");
+		for(NSString *ext in [languageDict objectForKey:@"fileTypes"]) {
+			SFONode *anExtNode = SELFML(@"extension", ext);
+			[extDetectorNode addChild:anExtNode];
+		}
+		[rootNode addChild:extDetectorNode];
+	}
+	
+	if ([languageDict objectForKey:@"firstLineMatch"] != nil) {
+		SFONode *contentMatchDetectorNode = SELFML(@"detector");
+		SFONode *regexContentMatchNode = SELFML(@"content-matches", [languageDict objectForKey:@"firstLineMatch"]);
+		[contentMatchDetectorNode addChild:regexContentMatchNode];
+		[rootNode addChild:contentMatchDetectorNode];
+	}
+	
+#pragma mark Folding
+	if([languageDict objectForKey:@"foldingStartMarker"] != nil || [languageDict objectForKey:@"foldingStopMarker"]) {
+		SFONode *foldingNode = SELFML(@"folding");
+		
+		if([languageDict objectForKey:@"foldingStartMarker"]) {
+			SFONode *startFoldingNode = SELFML(@"start", [languageDict objectForKey:@"foldingStartMarker"]);
+			[foldingNode addChild:startFoldingNode];
+		}
+		
+		if([languageDict objectForKey:@"foldingStopMarker"]) {
+			SFONode *stopFoldingNode = SELFML(@"stop", [languageDict objectForKey:@"foldingStopMarker"]);
+			[foldingNode addChild:stopFoldingNode];
+		}
+		
+		[rootNode addChild:foldingNode];
+	}
 	
 	for(NSDictionary *prefItem in prefArray) {
 		
@@ -728,7 +761,7 @@ void processLanguage(NSString *bundleRoot, NSString *languagePath, NSString *out
 										   error:nil];
 	
 	
-	processIq(bundleRoot, [outputPath stringByAppendingPathComponent:outputDirName], rootScope);
+	processIq(bundleRoot, [outputPath stringByAppendingPathComponent:outputDirName], rootScope, languageAsDic);
 	
 	//NSLog(@"Out: %@", [rootNode selfmlRepresentation]);
 }
