@@ -3,6 +3,7 @@
 #import "RegexKitLite.h"
 #import "T2TSnippetConverterShared.h"
 #import "T2TSnippetConverterLexer.h"
+#import "T2TKeyEquivalentConverter.h"
 
 #pragma mark -
 #pragma mark Metadata
@@ -413,9 +414,17 @@ void processSnippet(NSString *snippetPath, NSString *outputPath)
 	// name
 	if([snippetAsDic objectForKey:@"name"] != nil) {
 		SFONode *nameNode = SELFML(@"name", [snippetAsDic objectForKey:@"name"]);
-		//NSLog(@"FUCKING NAME: %@", [snippetAsDic objectForKey:@"name"]);
+
 		[rootNode addChild:nameNode];
 	}
+	
+	// key equiv trigger
+	if ([snippetAsDic objectForKey:@"keyEquivalent"] != nil) {
+		NSArray *keyEquivArray = T2TConvertKeyEquivalent([snippetAsDic objectForKey:@"keyEquivalent"]);
+		SFONode *keyNode = SELFML(@"key", [keyEquivArray componentsJoinedByString:@""]);
+		[triggerNode addChild:keyNode];
+	}
+	
 	// tab trigger
 	if([snippetAsDic objectForKey:@"tabTrigger"] != nil) {
 		SFONode *tabNode = SELFML(@"tab", [snippetAsDic objectForKey:@"tabTrigger"]);
@@ -485,6 +494,7 @@ void processCommand(NSString *fullPath, NSString *outputPath)
 	NSString *fullOutputPath = [outputPath stringByAppendingPathComponent:fullFileName];
 	SFONode *rootNode = [SFONode node];
 	
+	
 	// output equivalent dic
 	NSMutableDictionary *outputDic = [[NSMutableDictionary alloc] init];
 	[outputDic setObject:@"nothing" forKey:@"discard"];
@@ -501,6 +511,20 @@ void processCommand(NSString *fullPath, NSString *outputPath)
 	[brcDic setObject:@"nothing" forKey:@"nop"];
 	[brcDic setObject:@"file" forKey:@"saveActiveFile"];
 	[brcDic setObject:@"project" forKey:@"saveModifiedFiles"];
+	
+	
+	// key triggers
+	SFONode *triggerNode = SELFML(@"trigger");
+	if ([commandDic objectForKey:@"keyEquivalent"] != nil) {
+		NSArray *keyEquivArray = T2TConvertKeyEquivalent([commandDic objectForKey:@"keyEquivalent"]);
+		SFONode *keyNode = SELFML(@"key", [keyEquivArray componentsJoinedByString:@""]);
+		[triggerNode addChild:keyNode];
+	}
+	if ([commandDic objectForKey:@"tabTrigger"] != nil) {
+		SFONode *tabNode = SELFML(@"tab", [commandDic objectForKey:@"tabTrigger"]);
+		[triggerNode addChild:tabNode];
+	}
+	[rootNode addChild:triggerNode];
 	
 	// name
 	if([commandDic objectForKey:@"name"] != nil) {
