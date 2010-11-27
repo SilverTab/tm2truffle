@@ -43,6 +43,8 @@ int main (int argc, const char * argv[]) {
 		copyResources(pathToBundle, outputPath);
 		importLanguages(pathToBundle, outputPath);
 		importCommands(pathToBundle, outputPath);
+		importDragCommands(pathToBundle, outputPath);
+		importMacros(pathToBundle, outputPath);
 		importTemplates(pathToBundle, outputPath);
 		//processIq(pathToBundle, outputPath);
 		// Good! Do something with it!
