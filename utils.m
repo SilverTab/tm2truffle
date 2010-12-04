@@ -209,7 +209,7 @@ void processIq(NSString *bundleRoot, NSString *outputDir, NSString *rootScope, N
 	NSString *outputPHDir = [[[outputDir stringByDeletingLastPathComponent] stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"placeholder-themes"];
 	
 #pragma mark Detectors
-	if ([languageDict objectForKey:@"fileTypes"] != nil) {
+	if ([[languageDict objectForKey:@"fileTypes"] count] != nil) {
 		SFONode *extDetectorNode = SELFML(@"detector");
 		for(NSString *ext in [languageDict objectForKey:@"fileTypes"]) {
 			SFONode *anExtNode = SELFML(@"extension", ext);
@@ -218,7 +218,7 @@ void processIq(NSString *bundleRoot, NSString *outputDir, NSString *rootScope, N
 		[rootNode addChild:extDetectorNode];
 	}
 	
-	if ([languageDict objectForKey:@"firstLineMatch"] != nil) {
+	if ([[languageDict objectForKey:@"firstLineMatch"] length] != nil) {
 		SFONode *contentMatchDetectorNode = SELFML(@"detector");
 		SFONode *regexContentMatchNode = SELFML(@"content-matches", [languageDict objectForKey:@"firstLineMatch"]);
 		[contentMatchDetectorNode addChild:regexContentMatchNode];
@@ -226,18 +226,18 @@ void processIq(NSString *bundleRoot, NSString *outputDir, NSString *rootScope, N
 	}
 	
 #pragma mark Folding
-	if ([languageDict objectForKey:@"foldingStartMarker"] != nil || [languageDict objectForKey:@"foldingStopMarker"]) {
+	if ([[languageDict objectForKey:@"foldingStartMarker"] length] && [[languageDict objectForKey:@"foldingStopMarker"] length]) {
 		SFONode *foldingNode = SELFML(@"folding");
 		
-		if ([languageDict objectForKey:@"foldingStartMarker"]) {
+	//	if ([languageDict objectForKey:@"foldingStartMarker"]) {
 			SFONode *startFoldingNode = SELFML(@"start", [languageDict objectForKey:@"foldingStartMarker"]);
 			[foldingNode addChild:startFoldingNode];
-		}
+	//	}
 		
-		if ([languageDict objectForKey:@"foldingStopMarker"]) {
+	//	if ([languageDict objectForKey:@"foldingStopMarker"]) {
 			SFONode *stopFoldingNode = SELFML(@"stop", [languageDict objectForKey:@"foldingStopMarker"]);
 			[foldingNode addChild:stopFoldingNode];
-		}
+	//	}
 		
 		[rootNode addChild:foldingNode];
 	}
@@ -368,22 +368,22 @@ void processIq(NSString *bundleRoot, NSString *outputDir, NSString *rootScope, N
 #pragma mark Indentation
 		
 		// identation!
-		if ([[prefItem objectForKey:@"settings"] objectForKey:@"decreaseIndentPattern"] != nil) {
+		if ([[[prefItem objectForKey:@"settings"] objectForKey:@"decreaseIndentPattern"] length] != nil) {
 			SFONode *dintentNode = SELFML(@"indentation.decrease", [[prefItem objectForKey:@"settings"] objectForKey:@"decreaseIndentPattern"]);
 			[ruleNode addChild:dintentNode];
 		}
 		
-		if ([[prefItem objectForKey:@"settings"] objectForKey:@"increaseIndentPattern"] != nil) {
+		if ([[[prefItem objectForKey:@"settings"] objectForKey:@"increaseIndentPattern"] length] != nil) {
 			SFONode *intentNode = SELFML(@"indentation.increase", [[prefItem objectForKey:@"settings"] objectForKey:@"increaseIndentPattern"]);
 			[ruleNode addChild:intentNode];
 		}
 		
-		if ([[prefItem objectForKey:@"settings"] objectForKey:@"indentNextLinePattern"] != nil) {
+		if ([[[prefItem objectForKey:@"settings"] objectForKey:@"indentNextLinePattern"] length] != nil) {
 			SFONode *intentNlNode = SELFML(@"indentation.increase-next-line-only", [[prefItem objectForKey:@"settings"] objectForKey:@"indentNextLinePattern"]);
 			[ruleNode addChild:intentNlNode];
 		}
 		
-		if ([[prefItem objectForKey:@"settings"] objectForKey:@"unIndentedLinePattern"] != nil) {
+		if ([[[prefItem objectForKey:@"settings"] objectForKey:@"unIndentedLinePattern"] length] != nil) {
 			SFONode *intentINode = SELFML(@"indentation.ignore-line", [[prefItem objectForKey:@"settings"] objectForKey:@"unIndentedLinePattern"]);
 			[ruleNode addChild:intentINode];
 		}
@@ -393,7 +393,7 @@ void processIq(NSString *bundleRoot, NSString *outputDir, NSString *rootScope, N
 		if ([[prefItem objectForKey:@"settings"] objectForKey:@"showInSymbolList"] != nil) {
 			SFONode *symbolNode = SELFML(@"symbol-list");
 			
-			if ([[prefItem objectForKey:@"settings"] objectForKey:@"symbolTransformation"] != nil) {
+			if ([[[prefItem objectForKey:@"settings"] objectForKey:@"symbolTransformation"] length] != nil) {
 				[symbolNode addChild:SELFML(@"transformation", [[prefItem objectForKey:@"settings"] objectForKey:@"symbolTransformation"])];
 			}
 			[ruleNode addChild:symbolNode];
@@ -500,21 +500,21 @@ void processSnippet(NSString *snippetPath, NSString *outputPath)
 	SFONode *rootNode = [SFONode node];
 	SFONode *triggerNode = SELFML(@"trigger");
 	// name
-	if ([snippetAsDic objectForKey:@"name"] != nil) {
+	if ([[snippetAsDic objectForKey:@"name"] length] != nil) {
 		SFONode *nameNode = SELFML(@"name", [snippetAsDic objectForKey:@"name"]);
 
 		[rootNode addChild:nameNode];
 	}
 	
 	// key equiv trigger
-	if ([snippetAsDic objectForKey:@"keyEquivalent"] != nil) {
+	if ([[snippetAsDic objectForKey:@"keyEquivalent"] length] != nil) {
 		NSArray *keyEquivArray = T2TConvertKeyEquivalent([snippetAsDic objectForKey:@"keyEquivalent"]);
 		SFONode *keyNode = SELFML(@"key", [keyEquivArray componentsJoinedByString:@""]);
 		[triggerNode addChild:keyNode];
 	}
 	
 	// tab trigger
-	if ([snippetAsDic objectForKey:@"tabTrigger"] != nil) {
+	if ([[snippetAsDic objectForKey:@"tabTrigger"] length] != nil) {
 		SFONode *tabNode = SELFML(@"tab", [snippetAsDic objectForKey:@"tabTrigger"]);
 		[triggerNode addChild:tabNode];
 	}
@@ -522,16 +522,19 @@ void processSnippet(NSString *snippetPath, NSString *outputPath)
 	[rootNode addChild:triggerNode];
 	
 	// scope
-	if ([snippetAsDic objectForKey:@"scope"] != nil) {
+	if ([[snippetAsDic objectForKey:@"scope"] length] != nil) {
 		SFONode *scopeNode = SELFML(@"only-in", [snippetAsDic objectForKey:@"scope"]);
 		[rootNode addChild:scopeNode];
 	}
 	
 	// content! Let's see if Alex Gordon is as smart as he appears to be!
-	if ([snippetAsDic objectForKey:@"content"] != nil) {
+	if ([[snippetAsDic objectForKey:@"content"] length] != nil) {
 		NSString *convertedSnippet = T2TConvertTextMateSnippetToChocolat([snippetAsDic objectForKey:@"content"]);
-		if (convertedSnippet == nil)
+		if (![convertedSnippet length])
 			return; // bail..fuck that snippet
+
+
+		// Apparently he is!
 		SFONode *contentNode = SELFML(@"snippet", convertedSnippet);
 		[rootNode addChild:contentNode];
 	}
@@ -600,32 +603,42 @@ void processDragCommand(NSString *fullPath, NSString *outputPath)
 	
 	
 	// name
-	if ([commandDic objectForKey:@"name"] != nil) {
+	if ([[commandDic objectForKey:@"name"] length] != nil) {
 		SFONode *nameNode = SELFML(@"name", [commandDic objectForKey:@"name"]);
 		[rootNode addChild:nameNode];
 	}
 	
 	// scope
-	if ([commandDic objectForKey:@"scope"] != nil) {
+	if ([[commandDic objectForKey:@"scope"] length] != nil) {
 		SFONode *scopeNode = SELFML(@"only-in", [commandDic objectForKey:@"scope"]);
 		[rootNode addChild:scopeNode];
 	}
 	
 	// output
-	if ([commandDic objectForKey:@"output"] != nil) {
+	if ([[commandDic objectForKey:@"output"] length] != nil) {
 		NSString *outputValue = [outputDic objectForKey:[commandDic objectForKey:@"output"]];
 		SFONode *outputNode = SELFML(@"output", outputValue);
 		[rootNode addChild:outputNode];
 	}
 	
+	// file-extensions
+	if ([[commandDic objectForKey:@"draggedFileExtensions"] count] != nil) {
+		SFONode *extDetectorNode = SELFML(@"file-extensions");
+		for(NSString *ext in [commandDic objectForKey:@"draggedFileExtensions"]) {
+			if ([ext length])
+				[extDetectorNode addChild:ext];
+		}
+		[rootNode addChild:extDetectorNode];
+	}
+	
 	// brc
-	if ([commandDic objectForKey:@"beforeRunningCommand"] != nil) {
+	if ([[commandDic objectForKey:@"beforeRunningCommand"] length] != nil) {
 		SFONode *brcNode = SELFML(@"save", [brcDic objectForKey:[commandDic objectForKey:@"beforeRunningCommand"]]);
 		[rootNode addChild:brcNode];
 	}
 	
 	// src
-	if ([commandDic objectForKey:@"command"] != nil) {
+	if ([[commandDic objectForKey:@"command"] length] != nil) {
 		SFONode *commandNode = SELFML(@"script", [commandDic objectForKey:@"command"]);
 		[rootNode addChild:commandNode];
 	}
@@ -727,35 +740,38 @@ void processCommand(NSString *fullPath, NSString *outputPath)
 	
 	// key triggers
 	SFONode *triggerNode = SELFML(@"trigger");
-	if ([commandDic objectForKey:@"keyEquivalent"] != nil) {
+	if ([[commandDic objectForKey:@"keyEquivalent"] length]) {
 		NSArray *keyEquivArray = T2TConvertKeyEquivalent([commandDic objectForKey:@"keyEquivalent"]);
-		SFONode *keyNode = SELFML(@"key", [keyEquivArray componentsJoinedByString:@""]);
-		[triggerNode addChild:keyNode];
+		if (keyEquivArray)
+		{
+			SFONode *keyNode = SELFML(@"key", [keyEquivArray componentsJoinedByString:@""]);
+			[triggerNode addChild:keyNode];
+		}
 	}
-	if ([commandDic objectForKey:@"tabTrigger"] != nil) {
+	if ([[commandDic objectForKey:@"tabTrigger"] length]) {
 		SFONode *tabNode = SELFML(@"tab", [commandDic objectForKey:@"tabTrigger"]);
 		[triggerNode addChild:tabNode];
 	}
 	[rootNode addChild:triggerNode];
 	
 	// name
-	if ([commandDic objectForKey:@"name"] != nil) {
+	if ([[commandDic objectForKey:@"name"] length]) {
 		SFONode *nameNode = SELFML(@"name", [commandDic objectForKey:@"name"]);
 		[rootNode addChild:nameNode];
 	}
 	
 	// scope
-	if ([commandDic objectForKey:@"scope"] != nil) {
+	if ([[commandDic objectForKey:@"scope"] length]) {
 		SFONode *scopeNode = SELFML(@"only-in", [commandDic objectForKey:@"scope"]);
 		[rootNode addChild:scopeNode];
 	}
 	
 	// input
-	if ([commandDic objectForKey:@"input"] != nil) {
+	if ([[commandDic objectForKey:@"input"] length] != nil) {
 		NSString *inputValue = ([[commandDic objectForKey:@"input"] isEqual:@"none"]) ? @"nothing" : [commandDic objectForKey:@"input"];
 		SFONode *inputNode = SELFML(@"input", inputValue);
 		
-		if ([commandDic objectForKey:@"fallbackInput"] != nil) {
+		if ([[commandDic objectForKey:@"fallbackInput"] length] != nil) {
 			[inputNode addChild:(NSString *)[commandDic objectForKey:@"fallbackInput"]];
 		}
 		
@@ -763,20 +779,20 @@ void processCommand(NSString *fullPath, NSString *outputPath)
 	}
 	
 	// output
-	if ([commandDic objectForKey:@"output"] != nil) {
+	if ([[commandDic objectForKey:@"output"] length] != nil) {
 		NSString *outputValue = [outputDic objectForKey:[commandDic objectForKey:@"output"]];
 		SFONode *outputNode = SELFML(@"output", outputValue);
 		[rootNode addChild:outputNode];
 	}
 	
 	// brc
-	if ([commandDic objectForKey:@"beforeRunningCommand"] != nil) {
+	if ([[commandDic objectForKey:@"beforeRunningCommand"] length] != nil) {
 		SFONode *brcNode = SELFML(@"save", [brcDic objectForKey:[commandDic objectForKey:@"beforeRunningCommand"]]);
 		[rootNode addChild:brcNode];
 	}
 	
 	// src
-	if ([commandDic objectForKey:@"command"] != nil) {
+	if ([[commandDic objectForKey:@"command"] length] != nil) {
 		SFONode *commandNode = SELFML(@"script", [commandDic objectForKey:@"command"]);
 		[rootNode addChild:commandNode];
 	}
