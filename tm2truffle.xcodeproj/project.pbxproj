@@ -14,6 +14,7 @@
 		750126871278F9F000ACBF1C /* self-ml.c in Sources */ = {isa = PBXBuildFile; fileRef = 750126801278F9F000ACBF1C /* self-ml.c */; };
 		750126881278F9F000ACBF1C /* SFONode.m in Sources */ = {isa = PBXBuildFile; fileRef = 750126841278F9F000ACBF1C /* SFONode.m */; };
 		750126891278F9F000ACBF1C /* SFONodeChild.m in Sources */ = {isa = PBXBuildFile; fileRef = 750126861278F9F000ACBF1C /* SFONodeChild.m */; };
+		75055B6C12AFA4550080901E /* NSMutableArray+Duplicates.m in Sources */ = {isa = PBXBuildFile; fileRef = 75055B6B12AFA4550080901E /* NSMutableArray+Duplicates.m */; };
 		7519781F129855BE00FE3BB3 /* T2TKeyEquivalentConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = 7519781E129855BE00FE3BB3 /* T2TKeyEquivalentConverter.m */; };
 		753785F612665AAC00676EB6 /* T2TSnippetConverterLexer.m in Sources */ = {isa = PBXBuildFile; fileRef = 753785F312665AAC00676EB6 /* T2TSnippetConverterLexer.m */; };
 		753785F712665AAC00676EB6 /* T2TSnippetConverterParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 753785F512665AAC00676EB6 /* T2TSnippetConverterParser.m */; };
@@ -53,10 +54,12 @@
 		750126841278F9F000ACBF1C /* SFONode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFONode.m; sourceTree = "<group>"; };
 		750126851278F9F000ACBF1C /* SFONodeChild.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFONodeChild.h; sourceTree = "<group>"; };
 		750126861278F9F000ACBF1C /* SFONodeChild.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFONodeChild.m; sourceTree = "<group>"; };
+		75055B6A12AFA4550080901E /* NSMutableArray+Duplicates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+Duplicates.h"; sourceTree = "<group>"; };
+		75055B6B12AFA4550080901E /* NSMutableArray+Duplicates.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+Duplicates.m"; sourceTree = "<group>"; };
 		7519781D129855BE00FE3BB3 /* T2TKeyEquivalentConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = T2TKeyEquivalentConverter.h; sourceTree = "<group>"; };
 		7519781E129855BE00FE3BB3 /* T2TKeyEquivalentConverter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = T2TKeyEquivalentConverter.m; sourceTree = "<group>"; };
 		753785D712663E7D00676EB6 /* T2TSnippetConverterLexer.rl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = T2TSnippetConverterLexer.rl; sourceTree = "<group>"; };
-		753785DA12663ED900676EB6 /* T2TSnippetConverterParser.lemon */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = T2TSnippetConverterParser.lemon; sourceTree = "<group>"; };
+		753785DA12663ED900676EB6 /* T2TSnippetConverterParser.lemon */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = T2TSnippetConverterParser.lemon; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		753785F212665AAC00676EB6 /* T2TSnippetConverterLexer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = T2TSnippetConverterLexer.h; sourceTree = "<group>"; };
 		753785F312665AAC00676EB6 /* T2TSnippetConverterLexer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = T2TSnippetConverterLexer.m; sourceTree = "<group>"; };
 		753785F412665AAC00676EB6 /* T2TSnippetConverterParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = T2TSnippetConverterParser.h; sourceTree = "<group>"; };
@@ -110,6 +113,8 @@
 				753785F512665AAC00676EB6 /* T2TSnippetConverterParser.m */,
 				7519781D129855BE00FE3BB3 /* T2TKeyEquivalentConverter.h */,
 				7519781E129855BE00FE3BB3 /* T2TKeyEquivalentConverter.m */,
+				75055B6A12AFA4550080901E /* NSMutableArray+Duplicates.h */,
+				75055B6B12AFA4550080901E /* NSMutableArray+Duplicates.m */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -248,6 +253,7 @@
 				750126891278F9F000ACBF1C /* SFONodeChild.m in Sources */,
 				0C683A3B127DCE3500C68FEC /* RegexKitLite.m in Sources */,
 				7519781F129855BE00FE3BB3 /* T2TKeyEquivalentConverter.m in Sources */,
+				75055B6C12AFA4550080901E /* NSMutableArray+Duplicates.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -300,6 +306,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_GC = required;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;

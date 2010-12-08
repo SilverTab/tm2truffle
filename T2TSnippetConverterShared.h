@@ -8,6 +8,7 @@ typedef struct {
 } T2TSnippetToken;
 
 NSString *T2TConvertTextMateSnippetToChocolat(NSString *tmSnippet);
+NSString* T2TEscapeSnippetString(NSString *literal);
 
 void *ParseAlloc(void *(*mallocProc)(size_t));
 

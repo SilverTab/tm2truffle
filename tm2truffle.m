@@ -3,6 +3,7 @@
 #import "themeutils.h"
 
 #import "T2TKeyEquivalentConverter.h"
+#import "T2TSnippetConverterShared.h"
 
 int main (int argc, const char * argv[]) {
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
@@ -11,7 +12,7 @@ int main (int argc, const char * argv[]) {
 	
 	//NSLog(@"Key equiv: `%@`", T2TConvertKeyEquivalent([NSString stringWithFormat:@"$~%C", 0x0003]));
 	
-	//NSString *output = T2TConvertTextMateSnippetToChocolat(@"test!");
+	//NSString *output = T2TConvertTextMateSnippetToChocolat(@"foo${1:${2}baz$3}bar!");
 	//NSLog(@"Main Output: %@", output);
     //return 0;
 	// Very thorough argument checking...

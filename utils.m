@@ -5,6 +5,22 @@
 #import "T2TSnippetConverterLexer.h"
 #import "T2TKeyEquivalentConverter.h"
 
+NSString* T2TSanatizeRepresentationIdentifier(NSString* repid)
+{
+	repid = [repid lowercaseString];
+	
+	NSMutableCharacterSet *charset = [NSMutableCharacterSet whitespaceAndNewlineCharacterSet];
+	[charset addCharactersInString:@"/\\:"];
+	
+	NSMutableArray *repid_comps = [[repid componentsSeparatedByCharactersInSet:charset] mutableCopy];
+	[repid_comps removeObject:@""];
+	if (![repid_comps count])
+		return @"untitled";
+	
+	return [repid_comps componentsJoinedByString:@"-"];
+}
+
+
 #pragma mark -
 #pragma mark Metadata
 int importMetaData(NSString *bundleRoot, NSString *outputFile)
@@ -22,7 +38,7 @@ int importMetaData(NSString *bundleRoot, NSString *outputFile)
 	// provider...
 	NSString *provider;
 	if ([metaDic objectForKey:@"contactName"] != nil) {
-		provider = [@"private." stringByAppendingString:[[[metaDic objectForKey:@"contactName"] lowercaseString] stringByReplacingOccurrencesOfString:@" " withString:@"-"]];
+		provider = T2TSanatizeRepresentationIdentifier([metaDic objectForKey:@"contactName"]);
 	} else {
 		provider = @"private.anonymous";
 	}
@@ -578,7 +594,7 @@ void importSnippets(NSString *bundleRoot, NSString *outputFile)
 #pragma mark DragCommands
 void processDragCommand(NSString *fullPath, NSString *outputPath)
 {
-	NSString *fileName = [[[fullPath lastPathComponent] lowercaseString] stringByReplacingOccurrencesOfString:@" " withString:@"-"];
+	NSString *fileName = T2TSanatizeRepresentationIdentifier([fullPath lastPathComponent]);
 	NSString *fullFileName = [fileName stringByReplacingOccurrencesOfString:[fileName pathExtension] withString:@"selfml"];
 	NSDictionary *commandDic = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfFile:fullPath] options:0 format:nil error:nil];
 	NSString *fullOutputPath = [outputPath stringByAppendingPathComponent:fullFileName];
@@ -713,7 +729,7 @@ void importMacros(NSString *bundleRoot, NSString *outputFile)
 
 void processCommand(NSString *fullPath, NSString *outputPath)
 {
-	NSString *fileName = [[[fullPath lastPathComponent] lowercaseString] stringByReplacingOccurrencesOfString:@" " withString:@"-"];
+	NSString *fileName = T2TSanatizeRepresentationIdentifier([fullPath lastPathComponent]);
 	NSString *fullFileName = [fileName stringByReplacingOccurrencesOfString:[fileName pathExtension] withString:@"selfml"];
 	NSDictionary *commandDic = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfFile:fullPath] options:0 format:nil error:nil];
 	NSString *fullOutputPath = [outputPath stringByAppendingPathComponent:fullFileName];

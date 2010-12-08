@@ -90,6 +90,12 @@ NSArray* T2TConvertKeyEquivalent(NSString* textmate)
 		map_equiv(0xF732, @"[cancel]")
 		else
 		{
+			if (c >= 'A' && c <= 'Z')
+			{				
+				c -= 'A' - 'a';
+				[equiv addObject:@"[shift]"];
+			}
+			
 			[finalString appendFormat:@"%C", c];
 		}
 	}
@@ -98,6 +104,8 @@ NSArray* T2TConvertKeyEquivalent(NSString* textmate)
 		[equiv addObject:finalString];
 	
 	free(str);
+	
+	[equiv removeDuplicates];
 	
 	return equiv;
 }

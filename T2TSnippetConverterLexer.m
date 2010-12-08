@@ -405,6 +405,54 @@ _again:
 	return output;
 }
 
+NSString* T2TEscapeSnippetString(NSString *literal)
+{
+    if (![literal length])
+        return literal;
+        
+    NSUInteger len = [literal length];
+    unichar* cs = (unichar*)malloc(sizeof(unichar) * (len + 1));
+    [literal getCharacters:cs range:NSMakeRange(0, len)];
+    
+    NSMutableString *outputLiteral = [literal mutableCopy];
+    
+    NSUInteger i = 0;
+    BOOL isInEmbeddedMode = NO;
+	NSInteger bracketNestingLevel = 0;
+	
+    for (; i < len; i++)
+    {
+		if (cs[i] == '{')
+			bracketNestingLevel++;
+		else if (cs[i] == '}' && bracketNestingLevel > 0)
+			bracketNestingLevel--;
+		
+        if (!isInEmbeddedMode && cs[i] == '$' && (i + 1) < len && cs[i + 1] == '{')
+        {
+            isInEmbeddedMode = YES;
+            i++;
+        }
+        else if (isInEmbeddedMode && bracketNestingLevel == 0 && cs[i] == '}')
+        {
+            isInEmbeddedMode = NO;
+        }
+        else
+        {
+            NSString *substring = [literal substringWithRange:NSMakeRange(i, 1)];
+            
+            if (!isInEmbeddedMode && (cs[i] == '\\' || cs[i] == '\"'))
+                substring = [@"\\" stringByAppendingString:substring];
+            
+            [outputLiteral appendString:substring];
+        }
+        
+    }
+    
+    free(cs);
+	
+	return outputLiteral;
+}
+
 
  /*
 

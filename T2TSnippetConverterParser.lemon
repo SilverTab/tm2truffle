@@ -37,7 +37,7 @@ main ::= superroot(x). {
 %type superroot {NSString*}
 superroot(r) ::= superroot(r2) superroot_inner(i). {
 	r = [r2 stringByAppendingString:i]; }
-superroot(r) ::= root_inner(i). {
+superroot(r) ::= superroot_inner(i). {
 	r = i; }
 superroot(r) ::= . {
 	r = @""; }
@@ -53,18 +53,24 @@ root(r) ::= . {
 %type superroot_inner {NSString*}
 superroot_inner(i) ::= superverbatim(v). {
 	i = v; }
-superroot_inner(i) ::= root_inner(i2). {
-	i = i2; }
+superroot_inner(i) ::= root_inner_no_verbatim(t). {
+	i = t; }
+superroot_inner(i) ::= verbatim(v). {
+	i = v; }
 
 %type root_inner {NSString*}
-root_inner(i) ::= tabstop(t). {
-	i = t; }
-root_inner(i) ::= variable(v). {
-	i = v; }
-root_inner(i) ::= shell(s). {
-	i = s; }
+root_inner(i) ::= root_inner_no_verbatim(t). {
+	i = [@"%" stringByAppendingString:t]; }
 root_inner(i) ::= verbatim(v). {
 	i = v; }
+
+%type root_inner_no_verbatim {NSString*}
+root_inner_no_verbatim(i) ::= tabstop(t). {
+	i = t; }
+root_inner_no_verbatim(i) ::= variable(v). {
+	i = v; }
+root_inner_no_verbatim(i) ::= shell(s). {
+	i = s; }
 
 %type tabstop {NSString*}
 tabstop(t) ::= DOLLAR NUMERIC(n). {
