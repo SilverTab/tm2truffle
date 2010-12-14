@@ -788,7 +788,8 @@ void processCommand(NSString *fullPath, NSString *outputPath)
 		SFONode *inputNode = SELFML(@"input", inputValue);
 		
 		if ([[commandDic objectForKey:@"fallbackInput"] length] != nil) {
-			[inputNode addChild:(NSString *)[commandDic objectForKey:@"fallbackInput"]];
+			NSString *fallbackInputValue = ([[commandDic objectForKey:@"fallbackInput"] isEqual:@"none"]) ? @"nothing" : [commandDic objectForKey:@"fallbackInput"];
+			[inputNode addChild:fallbackInputValue];
 		}
 		
 		[rootNode addChild:inputNode];
