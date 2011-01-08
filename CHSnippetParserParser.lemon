@@ -21,9 +21,11 @@
 
 }
 
+
+%name CHSnippet_Parse
 %token_type {T2TSnippetToken}
 
-%extra_argument {NSMutableString *output}
+%extra_argument {id output}
 
 %syntax_error {
 	printf("Syntax error\n");
@@ -60,7 +62,7 @@ superroot_inner(i) ::= verbatim(v). {
 
 %type root_inner {NSString*}
 root_inner(i) ::= root_inner_no_verbatim(t). {
-  i = t; /*[@"%" stringByAppendingString:t];*/ }
+	i = [@"%" stringByAppendingString:t]; }
 root_inner(i) ::= verbatim(v). {
 	i = v; }
 
@@ -74,15 +76,15 @@ root_inner_no_verbatim(i) ::= shell(s). {
 
 %type tabstop {NSString*}
 tabstop(t) ::= DOLLAR NUMERIC(n). {
-    t = [NSString stringWithFormat:@"%{%@}", PAYLOAD_TO_STRING(n)]; }
+    t = [NSString stringWithFormat:@"{%@}", PAYLOAD_TO_STRING(n)]; }
 tabstop(t) ::= DOLLAR_CURLY NUMERIC(n) misc(m) CURLY. {
-    t = [NSString stringWithFormat:@"%{%@%@}", PAYLOAD_TO_STRING(n), m]; }
+    t = [NSString stringWithFormat:@"{%@%@}", PAYLOAD_TO_STRING(n), m]; }
 
 %type variable {NSString*}
 variable(v) ::= DOLLAR IDENTIFIER(n). {
-    v = [NSString stringWithFormat:@"%{%@}", PAYLOAD_TO_STRING(n)]; }
+    v = [NSString stringWithFormat:@"{%@}", PAYLOAD_TO_STRING(n)]; }
 variable(v) ::= DOLLAR_CURLY IDENTIFIER(n) misc(m) CURLY. {
-    v = [NSString stringWithFormat:@"%{%@%@}", PAYLOAD_TO_STRING(n), m]; }
+    v = [NSString stringWithFormat:@"{%@%@}", PAYLOAD_TO_STRING(n), m]; }
 
 %type misc {NSString*}
 misc(m) ::= COLON root(r). {
@@ -97,7 +99,7 @@ shell(s1) ::= SHELL(s2). {
     s1 = PAYLOAD_TO_STRING(s2); }
 
 shell(s1) ::= DOLLAR_CURLY SHELL(s2) misc(m) CURLY. {
-    s1 = [NSString stringWithFormat:@"%{%@%@}", PAYLOAD_TO_STRING(s2), m]; }
+    s1 = [NSString stringWithFormat:@"{%@%@}", PAYLOAD_TO_STRING(s2), m]; }
 
 %type superverbatim {NSString*}
 superverbatim(v) ::= CURLY(c). {
