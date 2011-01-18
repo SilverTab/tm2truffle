@@ -979,11 +979,11 @@ void processLanguage(NSString *bundleRoot, NSString *languagePath, NSString *out
 {
 	NSDictionary *languageAsDic = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfFile:languagePath] options:0 format:nil error:nil];
 	
-	NSString *bundleSourceName = [languageAsDic valueForKey:@"scopeName"];
-	NSMutableArray *components = [[bundleSourceName componentsSeparatedByString:@"."] mutableCopy];
-	[components removeObject:@"source"];
-	[components removeObject:@"sourcecode"];
-	NSString *outputDirName = [[components componentsJoinedByString:@"."] stringByReplacingOccurrencesOfString:@"/" withString:@""];
+	NSString *bundleSourceName = [languageAsDic objectForKey:@"name"];
+	if (![bundleSourceName length])
+		bundleSourceName = [[languagePath lastPathComponent] stringByDeletingPathExtension];
+	
+	NSString *outputDirName = bundleSourceName;
 	
 	// Create the output directory
 	[[NSFileManager defaultManager] createDirectoryAtPath:[outputPath stringByAppendingPathComponent:outputDirName]
