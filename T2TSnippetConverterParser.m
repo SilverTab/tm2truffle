@@ -770,7 +770,7 @@ static void yy_reduce(
       case 17: /* variable ::= DOLLAR IDENTIFIER */ yytestcase(yyruleno==17);
 #line 76 "T2TSnippetConverterParser.lemon"
 {
-    yygotominor.yy41 = [NSString stringWithFormat:@"%{%@}", PAYLOAD_TO_STRING(yymsp[0].minor.yy0)]; }
+    yygotominor.yy41 = [NSString stringWithFormat:@"%%{%@}", PAYLOAD_TO_STRING(yymsp[0].minor.yy0)]; }
 #line 775 "T2TSnippetConverterParser.c"
         break;
       case 16: /* tabstop ::= DOLLAR_CURLY NUMERIC misc CURLY */
@@ -778,7 +778,7 @@ static void yy_reduce(
       case 23: /* shell ::= DOLLAR_CURLY SHELL misc CURLY */ yytestcase(yyruleno==23);
 #line 78 "T2TSnippetConverterParser.lemon"
 {
-    yygotominor.yy41 = [NSString stringWithFormat:@"%{%@%@}", PAYLOAD_TO_STRING(yymsp[-2].minor.yy0), yymsp[-1].minor.yy41]; }
+    yygotominor.yy41 = [NSString stringWithFormat:@"%%{%@%@}", PAYLOAD_TO_STRING(yymsp[-2].minor.yy0), yymsp[-1].minor.yy41]; }
 #line 783 "T2TSnippetConverterParser.c"
         break;
       case 19: /* misc ::= COLON root */

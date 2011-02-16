@@ -102,9 +102,7 @@ NSString *T2TConvertTextMateSnippetToChocolat(NSString *tmSnippet)
 	//End
 	char *pe = p + strlen(p);
 	char *eof = pe;
-	
-	NSLog(@"p -> pe = %d -> %d = %s", p, pe, p);
-	
+		
 	//State
 	int cs = 0, act, have = 0, curline = 1;
 	char *ts, *te = 0;
@@ -118,9 +116,7 @@ NSString *T2TConvertTextMateSnippetToChocolat(NSString *tmSnippet)
 	T2TSnippetToken token;
 	Parse(lemon, 0, token, output);
 	ParseFree(lemon, free);
-	
-	NSLog(@"output %d string = %@", cs, output);
-	
+		
 	//Return the output
 	return output;
 }

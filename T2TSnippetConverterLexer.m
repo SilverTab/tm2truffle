@@ -167,9 +167,7 @@ NSString *T2TConvertTextMateSnippetToChocolat(NSString *tmSnippet)
 	//End
 	char *pe = p + strlen(p);
 	char *eof = pe;
-	
-	NSLog(@"p -> pe = %d -> %d = %s", p, pe, p);
-	
+		
 	//State
 	int cs = 0, act, have = 0, curline = 1;
 	char *ts, *te = 0;
@@ -177,7 +175,7 @@ NSString *T2TConvertTextMateSnippetToChocolat(NSString *tmSnippet)
 	
 	//Run the machine
 	
-#line 181 "T2TSnippetConverterLexer.c"
+#line 179 "T2TSnippetConverterLexer.c"
 	{
 	cs = TMSnippetToChocolatSnippet_start;
 	ts = 0;
@@ -185,9 +183,9 @@ NSString *T2TConvertTextMateSnippetToChocolat(NSString *tmSnippet)
 	act = 0;
 	}
 
-#line 115 "T2TSnippetConverterLexer.rl"
+#line 113 "T2TSnippetConverterLexer.rl"
 	
-#line 191 "T2TSnippetConverterLexer.c"
+#line 189 "T2TSnippetConverterLexer.c"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -206,7 +204,7 @@ _resume:
 #line 1 "NONE"
 	{ts = p;}
 	break;
-#line 210 "T2TSnippetConverterLexer.c"
+#line 208 "T2TSnippetConverterLexer.c"
 		}
 	}
 
@@ -362,7 +360,7 @@ _eof_trans:
 	}
 	}
 	break;
-#line 366 "T2TSnippetConverterLexer.c"
+#line 364 "T2TSnippetConverterLexer.c"
 		}
 	}
 
@@ -375,7 +373,7 @@ _again:
 #line 1 "NONE"
 	{ts = 0;}
 	break;
-#line 379 "T2TSnippetConverterLexer.c"
+#line 377 "T2TSnippetConverterLexer.c"
 		}
 	}
 
@@ -392,15 +390,13 @@ _again:
 
 	}
 
-#line 116 "T2TSnippetConverterLexer.rl"
+#line 114 "T2TSnippetConverterLexer.rl"
 		
 	//End lemon
 	T2TSnippetToken token;
 	Parse(lemon, 0, token, output);
 	ParseFree(lemon, free);
-	
-	NSLog(@"output %d string = %@", cs, output);
-	
+		
 	//Return the output
 	return output;
 }

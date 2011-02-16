@@ -62,9 +62,7 @@ int importMetaData(NSString *bundleRoot, NSString *outputFile)
 																								   atomically:YES 
 																									 encoding:NSUTF8StringEncoding 
 																										error:nil];
-	
-	//NSLog(@"Meta info: %@", [rootNode selfmlRepresentation]);
-	
+		
 	return 1;
 }
 
@@ -152,7 +150,6 @@ SFONode *processRegex(NSString *regex, SFONode **parentNode)
 	
 	NSString *listRegex = @"^(\\(\\?i\\))?(\\^)?(\\\\b)?(\\([^\\[\\\\\\^\\$\\.\\|\\?\\*\\+\\(\\)]+(\\|[^\\[\\\\\\^\\$\\.\\|\\?\\*\\+\\(\\)]+)*\\))(\\\\b)?(\\$)?$";
 	if ([regex rangeOfRegex:listRegex].location != NSNotFound) {
-		NSLog(@" IT'S A LIST: %@", regex);
 		SFONode *listNode = SELFML(@"list");
 		NSArray *matches = [regex arrayOfCaptureComponentsMatchedByRegex:listRegex];
 		
@@ -218,7 +215,6 @@ SFONode *processRegex(NSString *regex, SFONode **parentNode)
 #pragma mark Booya
 void processIq(NSString *bundleRoot, NSString *outputDir, NSString *rootScope, NSDictionary *languageDict)
 {
-	NSLog(@"======================== %@", outputDir);
 	NSArray *prefArray = loadPreferences(bundleRoot);
 	SFONode *rootNode = [SFONode node];
 	SFONode *placeholderNode = nil;
@@ -327,7 +323,6 @@ void processIq(NSString *bundleRoot, NSString *outputDir, NSString *rootScope, N
 			}
 			
 			[placeholderNode addChild:zoneNode];
-			NSLog(@"Node: %@", [placeholderNode selfmlRepresentation]);
 			
 			continue;
 		}
@@ -492,8 +487,6 @@ void processIq(NSString *bundleRoot, NSString *outputDir, NSString *rootScope, N
 													  error:nil];
 	}
 	
-		
-	NSLog(@"IQ: %@", [rootNode selfmlRepresentation]);
 	
 	[[rootNode selfmlRepresentation] writeToFile:[outputDir stringByAppendingPathComponent:@"iq.selfml"] 
 									  atomically:YES 
@@ -561,7 +554,6 @@ void processSnippet(NSString *snippetPath, NSString *outputPath)
 									  atomically:YES 
 										encoding:NSUTF8StringEncoding 
 										   error:nil];
-	//NSLog(@"%@", [rootNode selfmlRepresentation]);
 }
 
 void importSnippets(NSString *bundleRoot, NSString *outputFile)
@@ -569,7 +561,6 @@ void importSnippets(NSString *bundleRoot, NSString *outputFile)
 	NSString *snippetsPath = [bundleRoot stringByAppendingPathComponent:@"Snippets"];
 	NSMutableArray *snippets = [[NSMutableArray alloc] init];
 	if (![[NSFileManager defaultManager] fileExistsAtPath:snippetsPath]) {
-		NSLog(@"No snippets to import...continuing...");
 		return;
 	}
 	// create the snippet directory...
@@ -674,7 +665,6 @@ void importDragCommands(NSString *bundleRoot, NSString *outputFile)
 	NSFileManager *fm = [NSFileManager defaultManager];
 	
 	if (![[NSFileManager defaultManager] fileExistsAtPath:commandsPath]) {
-		NSLog(@"No drag commands to import...continuing...");
 		return;
 	}
 	// create the snippet directory...
@@ -701,7 +691,6 @@ void importMacros(NSString *bundleRoot, NSString *outputFile)
 	NSFileManager *fm = [NSFileManager defaultManager];
 	
 	if (![[NSFileManager defaultManager] fileExistsAtPath:macrosPath]) {
-		NSLog(@"No macros to import...continuing...");
 		return;
 	}
 	// create the macro directory...
@@ -828,7 +817,6 @@ void importCommands(NSString *bundleRoot, NSString *outputFile)
 	NSFileManager *fm = [NSFileManager defaultManager];
 	
 	if (![[NSFileManager defaultManager] fileExistsAtPath:commandsPath]) {
-		NSLog(@"No commnads to import...continuing...");
 		return;
 	}
 	// create the snippet directory...
@@ -971,7 +959,6 @@ void processPattern(NSDictionary *pattern, SFONode **rootNode) {
 		[nodePattern addChild:subzoneNode];
 	}
 	
-	//NSLog(@"Zone: %@", [nodePattern selfmlRepresentation]);
 	[*rootNode addChild:nodePattern];
 }
 
@@ -1031,8 +1018,6 @@ void processLanguage(NSString *bundleRoot, NSString *languagePath, NSString *out
 	
 	
 	processIq(bundleRoot, [outputPath stringByAppendingPathComponent:outputDirName], rootScope, languageAsDic);
-	
-	//NSLog(@"Out: %@", [rootNode selfmlRepresentation]);
 }
 
 void importLanguages(NSString *bundleRoot, NSString *outputFile)
@@ -1166,7 +1151,6 @@ void processTemplate(NSString *fullPath, NSString *outputDir, NSString *bundleRo
 										encoding:NSUTF8StringEncoding 
 										   error:nil];
 	
-	//NSLog(@"Template: %@", [rootNode selfmlRepresentation]);
 }
 
 void importTemplates(NSString *bundleRoot, NSString *outputFile)
@@ -1177,7 +1161,6 @@ void importTemplates(NSString *bundleRoot, NSString *outputFile)
 	
 	// do we have to import them?
 	if (![fm fileExistsAtPath:templatePath]) {
-		NSLog(@"No templates, continuing!");
 		return;
 	}
 	// create the template output dir...
