@@ -36,7 +36,7 @@ main ::= superroot(x). {
 
 %type superroot {NSString*}
 superroot(r) ::= superroot(r2) superroot_inner(i). {
-	r = [r2 stringByAppendingString:i]; }
+	r = [(r2 ?: @"") stringByAppendingString:(i ?: @"")]; }
 superroot(r) ::= superroot_inner(i). {
 	r = i; }
 superroot(r) ::= . {
@@ -44,7 +44,7 @@ superroot(r) ::= . {
 
 %type root {NSString*}
 root(r) ::= root(r2) root_inner(i). {
-	r = [r2 stringByAppendingString:i]; }
+	r = [(r2 ?: @"") stringByAppendingString:(i ?: @"")]; }
 root(r) ::= root_inner(i). {
 	r = i; }
 root(r) ::= . {
@@ -87,6 +87,7 @@ variable(v) ::= DOLLAR_CURLY IDENTIFIER(n) misc(m) CURLY. {
 %type misc {NSString*}
 misc(m) ::= COLON root(r). {
     m = [NSString stringWithFormat:@"=\"%@\"", ESCAPE_SNIPPET_STRING(r)]; }
+
 misc(m) ::= REGEX(r). {
     m = PAYLOAD_TO_STRING(r); }
 misc(m) ::= . {
@@ -104,6 +105,8 @@ superverbatim(v) ::= CURLY(c). {
     v = PAYLOAD_TO_STRING(c); }
 
 %type verbatim {NSString*}
+verbatim(v) ::= REGEXY(r). {
+    v = PAYLOAD_TO_STRING(r); }
 verbatim(v) ::= CHAR(c). {
     v = CHAR_PAYLOAD_TO_STRING(c); }
 verbatim(v) ::= DOLLAR_CURLY. {
@@ -112,8 +115,6 @@ verbatim(v) ::= DOLLAR. {
     v = @"$"; }
 verbatim(v) ::= COLON. {
     v = @":"; }
-verbatim(v) ::= REGEX(r). {
-    v = PAYLOAD_TO_STRING(r); }
 verbatim(v) ::= IDENTIFIER(d). {
     v = PAYLOAD_TO_STRING(d); }
 verbatim(v) ::= NUMERIC(n). {

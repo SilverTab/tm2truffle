@@ -8,7 +8,7 @@
 }%%
 
 %%{
-regex_string = ([^/\\] | "\\\\" | "\\/" | "\\" [^/\\])+;
+regex_string = ([^/\\\}] | "\\\\" | "\\/" | "\\" [^/\\\}])+;
 regex = "/" regex_string "/" regex_string ("/" alnum*)?;
 
 main := |*
@@ -21,7 +21,7 @@ main := |*
 	":" { emit(COLON, ts, te, lemon, output); };
 	":}" { emit(CURLY, ts, te, lemon, output); };
 	"}" { emit(CURLY, ts, te, lemon, output); };
-	regex { emit(REGEX, ts, te, lemon, output); };
+	regex { emit(REGEXY, ts, te, lemon, output); };
 
 	(alpha | '_') (alnum | '_')* { emit(IDENTIFIER, ts, te, lemon, output); };
 	digit+ { emit(NUMERIC, ts, te, lemon, output); };
@@ -75,7 +75,7 @@ void emit_shell(void* lemon, NSMutableString *output)
 void emit_regex(void* lemon, NSMutableString *output)
 {	
 	T2TSnippetToken token;
-	token.type = REGEX;
+	token.type = REGEXY;
 	token.payloadChar = '\0';
 	token.payloadStart = NULL;
 	token.payloadEnd = NULL;
@@ -87,6 +87,8 @@ void emit_regex(void* lemon, NSMutableString *output)
 
 NSString *T2TConvertTextMateSnippetToChocolat(NSString *tmSnippet)
 {
+	NSLog(@"Snippet: %@", tmSnippet);
+	
 	//Get string data
 	char* data = (char *)[tmSnippet UTF8String];
 	
@@ -118,6 +120,8 @@ NSString *T2TConvertTextMateSnippetToChocolat(NSString *tmSnippet)
 	ParseFree(lemon, free);
 		
 	//Return the output
+	NSLog(@"Output: %@", output);
+	NSLog(@"-----");
 	return output;
 }
 

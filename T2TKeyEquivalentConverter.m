@@ -10,6 +10,14 @@
 
 #define map_equiv(ch, name) else if (c == ch) [equiv addObject:name]; 
 
+/*
+	Examples:
+		ctrl-g			=> [ctrl]G
+		ctrl-shift-g	=> [ctrl][shift]G
+		ctrl-7			=> [ctrl]7
+		ctrl-shift-7	=> [ctrl][shift]&
+*/
+
 NSArray* T2TConvertKeyEquivalent(NSString* textmate)
 {
 	NSMutableArray* equiv = [[NSMutableArray alloc] init];
@@ -18,17 +26,31 @@ NSArray* T2TConvertKeyEquivalent(NSString* textmate)
 	[textmate getCharacters:str range:NSMakeRange(0, [textmate length])];
 	
 	//Try to parse one or more modifiers
+	BOOL hasControl = NO;
+	BOOL hasAlt = NO;
+	BOOL hasShift = NO;
+	BOOL hasCommand = NO;
+	
 	NSUInteger i = 0;
 	NSInteger length = [textmate length];
 	for (i = 0; i < length - 1; i++)
 	{
 		unichar c = str[i];
 		
-		if (NO) { }
+		if (c == '@')
+			hasCommand = YES;
+		else if (c == '$')
+			hasShift = YES;
+		else if (c == '^')
+			hasControl = YES;
+		else if (c == '~')
+			hasAlt = YES;
+		/*
 		map_equiv('@', @"[cmd]")
 		map_equiv('$', @"[shift]")
 		map_equiv('^', @"[ctrl]")
 		map_equiv('~', @"[alt]")
+		*/
 		else
 			break;
 	}
@@ -92,20 +114,43 @@ NSArray* T2TConvertKeyEquivalent(NSString* textmate)
 		{
 			if (c >= 'A' && c <= 'Z')
 			{				
-				c -= 'A' - 'a';
-				[equiv addObject:@"[shift]"];
+				hasShift = YES;
+			}
+			else if (c >= 'a' && c <= 'z')
+			{
+				c += 'A' - 'a';
+			}
+			else if (c == '!' || c == '@' || c == '#' || c == '$' || c == '%' || c == '^' || c == '&' || c == '*' || c == '(' || c == ')' || c == '_' || c == '+' || c == '~' || c == '{' || c == '}' || c == ':' || c == '"' || c == '|' || c == '<' || c == '>' || c == '?')
+			{
+				hasShift = YES;
 			}
 			
 			[finalString appendFormat:@"%C", c];
 		}
 	}
 	
+	//Order must be:
+	// [ctrl] [alt] [shift] [cmd]
+	
+	//In reverse order, prepend to the array
+	if (hasCommand)
+		[equiv insertObject:@"[cmd]" atIndex:0];
+	
+	if (hasShift)
+		[equiv insertObject:@"[shift]" atIndex:0];
+	
+	if (hasAlt)
+		[equiv insertObject:@"[alt]" atIndex:0];
+	
+	if (hasControl)
+		[equiv insertObject:@"[ctrl]" atIndex:0];
+	
 	if ([finalString length])
 		[equiv addObject:finalString];
 	
 	free(str);
 	
-	[equiv removeDuplicates];
+	//[equiv removeDuplicates];
 	
 	return equiv;
 }

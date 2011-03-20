@@ -6,4 +6,5 @@
 #define COLON                           6
 #define REGEX                           7
 #define SHELL                           8
-#define CHAR                            9
+#define REGEXY                          9
+#define CHAR                           10

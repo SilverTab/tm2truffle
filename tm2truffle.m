@@ -11,10 +11,10 @@ int main (int argc, const char * argv[]) {
 	NSString *outputPath;
 	
 	//NSLog(@"Key equiv: `%@`", T2TConvertKeyEquivalent([NSString stringWithFormat:@"$~%C", 0x0003]));
-	
-	NSString *output = T2TConvertTextMateSnippetToChocolat(@"foo${1:${2}baz$3}bar!");
-	NSLog(@"Main Output: %@", output);
-    return 0;
+	//return 0;
+	//NSString *output = T2TConvertTextMateSnippetToChocolat(@"${1:abc/def/asd}");//@"foo${1:${2}baz$3}bar!");
+	//NSLog(@"Main Output: %@", output);
+    //return 0;
 	// Very thorough argument checking...
 	if(argc != 3) {
 		NSLog(@"Only 2 argument are required, the input path...and output path kthxbye");
