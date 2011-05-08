@@ -29,6 +29,8 @@
 	printf("Syntax error\n");
 }
 
+%name {T2TParse}
+
 
 %type main {NSString*}
 main ::= superroot(x). {

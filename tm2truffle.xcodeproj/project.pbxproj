@@ -143,7 +143,7 @@
 				750126811278F9F000ACBF1C /* self-ml.h */,
 			);
 			name = Source;
-			path = "self-ml/Implementations/C/Source";
+			path = "../self-ml/Implementations/C/Source";
 			sourceTree = "<group>";
 		};
 		750126821278F9F000ACBF1C /* Source */ = {
@@ -155,7 +155,7 @@
 				750126861278F9F000ACBF1C /* SFONodeChild.m */,
 			);
 			name = Source;
-			path = "self-ml/Implementations/Objective-C/Source";
+			path = "../self-ml/Implementations/Objective-C/Source";
 			sourceTree = "<group>";
 		};
 		753785FA12665ABB00676EB6 /* Other Source */ = {
@@ -310,9 +310,10 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				PREBINDING = NO;
 				SDKROOT = macosx10.6;
+				VALID_ARCHS = "i386 x86_64";
 			};
 			name = Debug;
 		};
@@ -323,8 +324,10 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				PREBINDING = NO;
 				SDKROOT = macosx10.6;
+				VALID_ARCHS = "i386 x86_64";
 			};
 			name = Release;
 		};

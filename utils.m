@@ -103,104 +103,106 @@ NSMutableArray* loadPreferences(NSString *bundleRoot) {
 	
 }
 
-SFONode *processRegex(NSString *regex, SFONode **parentNode)
+SFONode *processRegex(NSString *regex, SFONode **parentNode, BOOL shouldSimplify)
 {
-	NSString *stringRegex = @"^(\\(\\?i\\))?(\\^)?(\\\\b)?([^\\[\\\\\\^\\$\\.\\|\\?\\*\\+\\(\\)]+)(\\\\b)?(\\$)?$";
-	
-	if ([regex rangeOfRegex:stringRegex].location != NSNotFound) {
-		NSArray *matches = [regex arrayOfCaptureComponentsMatchedByRegex:stringRegex];
-		[*parentNode addChild:[[matches lastObject] objectAtIndex:4]];
-		// process its flags
-		if ([[[matches lastObject] objectAtIndex:1] length]) {
-			// ignore case
-			SFONode *ignoreCaseNode = SELFML(@"ignore-case");
-			[*parentNode addChild:ignoreCaseNode];
-		}
-		if ([[[matches lastObject] objectAtIndex:2] length] > 0 && [[[matches lastObject] objectAtIndex:6] length] > 0) {
-			// anchor both
-			SFONode *abothCaseNode = SELFML(@"anchor.both");
-			[*parentNode addChild:abothCaseNode];
-		} else if ([[[matches lastObject] objectAtIndex:2] length] > 0) {
-			// anchor left
-			SFONode *aleftCaseNode = SELFML(@"anchor.left");
-			[*parentNode addChild:aleftCaseNode];
-		}else if ([[[matches lastObject] objectAtIndex:6] length] > 0) {
-			// anchor right
-			SFONode *arightCaseNode = SELFML(@"anchor.right");
-			[*parentNode addChild:arightCaseNode];
+	if (shouldSimplify)
+	{
+		NSString *stringRegex = @"^(\\(\\?i\\))?(\\^)?(\\\\b)?([^\\[\\\\\\^\\$\\.\\|\\?\\*\\+\\(\\)]+)(\\\\b)?(\\$)?$";
+		
+		if ([regex rangeOfRegex:stringRegex].location != NSNotFound) {
+			NSArray *matches = [regex arrayOfCaptureComponentsMatchedByRegex:stringRegex];
+			[*parentNode addChild:[[matches lastObject] objectAtIndex:4]];
+			// process its flags
+			if ([[[matches lastObject] objectAtIndex:1] length]) {
+				// ignore case
+				SFONode *ignoreCaseNode = SELFML(@"ignore-case");
+				[*parentNode addChild:ignoreCaseNode];
+			}
+			if ([[[matches lastObject] objectAtIndex:2] length] > 0 && [[[matches lastObject] objectAtIndex:6] length] > 0) {
+				// anchor both
+				SFONode *abothCaseNode = SELFML(@"anchor.both");
+				[*parentNode addChild:abothCaseNode];
+			} else if ([[[matches lastObject] objectAtIndex:2] length] > 0) {
+				// anchor left
+				SFONode *aleftCaseNode = SELFML(@"anchor.left");
+				[*parentNode addChild:aleftCaseNode];
+			}else if ([[[matches lastObject] objectAtIndex:6] length] > 0) {
+				// anchor right
+				SFONode *arightCaseNode = SELFML(@"anchor.right");
+				[*parentNode addChild:arightCaseNode];
+			}
+			
+			if ([[[matches lastObject] objectAtIndex:3] length] > 0 && [[[matches lastObject] objectAtIndex:5] length] > 0) {
+				// boundary both
+				SFONode *bbothCaseNode = SELFML(@"boundary.both");
+				[*parentNode addChild:bbothCaseNode];
+			} else if ([[[matches lastObject] objectAtIndex:3] length] > 0) {
+				// boundary left
+				SFONode *bleftCaseNode = SELFML(@"boundary.left");
+				[*parentNode addChild:bleftCaseNode];
+			}else if ([[[matches lastObject] objectAtIndex:5] length] > 0) {
+				// boundary right
+				SFONode *brightCaseNode = SELFML(@"boundary.right");
+				[*parentNode addChild:brightCaseNode];
+			}
+			
+			return nil;
+			//NSLog(@"IT'S A STRING: %@\nMatches: %@", regex, matches);
 		}
 		
-		if ([[[matches lastObject] objectAtIndex:3] length] > 0 && [[[matches lastObject] objectAtIndex:5] length] > 0) {
-			// boundary both
-			SFONode *bbothCaseNode = SELFML(@"boundary.both");
-			[*parentNode addChild:bbothCaseNode];
-		} else if ([[[matches lastObject] objectAtIndex:3] length] > 0) {
-			// boundary left
-			SFONode *bleftCaseNode = SELFML(@"boundary.left");
-			[*parentNode addChild:bleftCaseNode];
-		}else if ([[[matches lastObject] objectAtIndex:5] length] > 0) {
-			// boundary right
-			SFONode *brightCaseNode = SELFML(@"boundary.right");
-			[*parentNode addChild:brightCaseNode];
+		NSString *listRegex = @"^(\\(\\?i\\))?(\\^)?(\\\\b)?(\\([^\\[\\\\\\^\\$\\.\\|\\?\\*\\+\\(\\)]+(\\|[^\\[\\\\\\^\\$\\.\\|\\?\\*\\+\\(\\)]+)*\\))(\\\\b)?(\\$)?$";
+		if ([regex rangeOfRegex:listRegex].location != NSNotFound) {
+			SFONode *listNode = SELFML(@"list");
+			NSArray *matches = [regex arrayOfCaptureComponentsMatchedByRegex:listRegex];
+			
+			// list items
+			NSString *contentWithoutParen = [[[matches lastObject] objectAtIndex:4] substringWithRange:NSMakeRange(1, [[[matches lastObject] objectAtIndex:4] length] -2)];
+			for(NSString *item in [contentWithoutParen componentsSeparatedByString:@"|"]) {
+				[listNode addChild:item];
+			}
+			
+			[*parentNode addChild:listNode];
+			
+			// process its flags
+			if ([[[matches lastObject] objectAtIndex:1] length]) {
+				// ignore case
+				SFONode *ignoreCaseNode = SELFML(@"ignore-case");
+				[*parentNode addChild:ignoreCaseNode];
+			}
+			
+			if ([[[matches lastObject] objectAtIndex:2] length] > 0 && [[[matches lastObject] objectAtIndex:7] length] > 0) {
+				// anchor both
+				SFONode *abothCaseNode = SELFML(@"anchor.both");
+				[*parentNode addChild:abothCaseNode];
+			} else if ([[[matches lastObject] objectAtIndex:2] length] > 0) {
+				// anchor left
+				SFONode *aleftCaseNode = SELFML(@"anchor.left");
+				[*parentNode addChild:aleftCaseNode];
+			}else if ([[[matches lastObject] objectAtIndex:7] length] > 0) {
+				// anchor right
+				SFONode *arightCaseNode = SELFML(@"anchor.right");
+				[*parentNode addChild:arightCaseNode];
+			}
+			
+			if ([[[matches lastObject] objectAtIndex:3] length] > 0 && [[[matches lastObject] objectAtIndex:6] length] > 0) {
+				// boundary both
+				SFONode *bbothCaseNode = SELFML(@"boundary.both");
+				[*parentNode addChild:bbothCaseNode];
+			} else if ([[[matches lastObject] objectAtIndex:3] length] > 0) {
+				// boundary left
+				SFONode *bleftCaseNode = SELFML(@"boundary.left");
+				[*parentNode addChild:bleftCaseNode];
+			}else if ([[[matches lastObject] objectAtIndex:6] length] > 0) {
+				// boundary right
+				SFONode *brightCaseNode = SELFML(@"boundary.right");
+				[*parentNode addChild:brightCaseNode];
+			}
+			
+			
+			
+			return nil;
 		}
-		
-		return nil;
-		//NSLog(@"IT'S A STRING: %@\nMatches: %@", regex, matches);
 	}
-	
-	NSString *listRegex = @"^(\\(\\?i\\))?(\\^)?(\\\\b)?(\\([^\\[\\\\\\^\\$\\.\\|\\?\\*\\+\\(\\)]+(\\|[^\\[\\\\\\^\\$\\.\\|\\?\\*\\+\\(\\)]+)*\\))(\\\\b)?(\\$)?$";
-	if ([regex rangeOfRegex:listRegex].location != NSNotFound) {
-		SFONode *listNode = SELFML(@"list");
-		NSArray *matches = [regex arrayOfCaptureComponentsMatchedByRegex:listRegex];
-		
-		// list items
-		NSString *contentWithoutParen = [[[matches lastObject] objectAtIndex:4] substringWithRange:NSMakeRange(1, [[[matches lastObject] objectAtIndex:4] length] -2)];
-		for(NSString *item in [contentWithoutParen componentsSeparatedByString:@"|"]) {
-			[listNode addChild:item];
-		}
-		
-		[*parentNode addChild:listNode];
-		
-		// process its flags
-		if ([[[matches lastObject] objectAtIndex:1] length]) {
-			// ignore case
-			SFONode *ignoreCaseNode = SELFML(@"ignore-case");
-			[*parentNode addChild:ignoreCaseNode];
-		}
-		
-		if ([[[matches lastObject] objectAtIndex:2] length] > 0 && [[[matches lastObject] objectAtIndex:7] length] > 0) {
-			// anchor both
-			SFONode *abothCaseNode = SELFML(@"anchor.both");
-			[*parentNode addChild:abothCaseNode];
-		} else if ([[[matches lastObject] objectAtIndex:2] length] > 0) {
-			// anchor left
-			SFONode *aleftCaseNode = SELFML(@"anchor.left");
-			[*parentNode addChild:aleftCaseNode];
-		}else if ([[[matches lastObject] objectAtIndex:7] length] > 0) {
-			// anchor right
-			SFONode *arightCaseNode = SELFML(@"anchor.right");
-			[*parentNode addChild:arightCaseNode];
-		}
-		
-		if ([[[matches lastObject] objectAtIndex:3] length] > 0 && [[[matches lastObject] objectAtIndex:6] length] > 0) {
-			// boundary both
-			SFONode *bbothCaseNode = SELFML(@"boundary.both");
-			[*parentNode addChild:bbothCaseNode];
-		} else if ([[[matches lastObject] objectAtIndex:3] length] > 0) {
-			// boundary left
-			SFONode *bleftCaseNode = SELFML(@"boundary.left");
-			[*parentNode addChild:bleftCaseNode];
-		}else if ([[[matches lastObject] objectAtIndex:6] length] > 0) {
-			// boundary right
-			SFONode *brightCaseNode = SELFML(@"boundary.right");
-			[*parentNode addChild:brightCaseNode];
-		}
-		
-		
-		
-		return nil;
-	}
-	
 	
 	
 	SFONode *regexNode = SELFML(@"regex", regex);
@@ -862,7 +864,8 @@ void processPattern(NSDictionary *pattern, SFONode **rootNode) {
 	// match
 	if ([pattern objectForKey:@"match"] != nil) {
 		SFONode *matchNode = SELFML(@"match");
-		SFONode *regexNode = processRegex([pattern objectForKey:@"match"], &matchNode);
+        NSLog(@"[pattern objectForKey:@\"match\"] = %d | %@", [[pattern objectForKey:@"captures"] count] == 0, [pattern objectForKey:@"match"]);
+		SFONode *regexNode = processRegex([pattern objectForKey:@"match"], &matchNode, [[pattern objectForKey:@"captures"] count] == 0);
 		
 		
 		//[matchNode addChild:regexNode];
@@ -875,7 +878,7 @@ void processPattern(NSDictionary *pattern, SFONode **rootNode) {
 			} 			
 			for(NSString *akey in [captureDic allKeys]) {
 				if ([akey intValue] || [akey isEqual:@"0"] || [akey isEqual:[NSNumber numberWithInt:0]]) {
-					SFONode *captureNode = SELFML(akey, [[captureDic valueForKey:akey] valueForKey:@"name"]);
+					SFONode *captureNode = SELFML([akey description], [[captureDic valueForKey:akey] valueForKey:@"name"]);
 					[regexNode addChild:captureNode];
 				}
 			}
@@ -885,7 +888,7 @@ void processPattern(NSDictionary *pattern, SFONode **rootNode) {
 	}
 	if ([pattern objectForKey:@"begin"] != nil) {
 		SFONode *startNode = SELFML(@"start");
-		SFONode *regexNode = processRegex([pattern objectForKey:@"begin"], &startNode);
+		SFONode *regexNode = processRegex([pattern objectForKey:@"begin"], &startNode, [pattern objectForKey:@"beginCaptures"] == nil && [pattern objectForKey:@"captures"] == nil);
 		
 		if ([pattern objectForKey:@"beginCaptures"] != nil) {
 			NSDictionary *beginCaptureDic = [pattern objectForKey:@"beginCaptures"];
@@ -917,7 +920,7 @@ void processPattern(NSDictionary *pattern, SFONode **rootNode) {
 	}
 	if ([pattern objectForKey:@"end"] != nil) {
 		SFONode *endNode = SELFML(@"end");
-		SFONode *regexNode = processRegex([pattern objectForKey:@"end"], &endNode);
+		SFONode *regexNode = processRegex([pattern objectForKey:@"end"], &endNode, [pattern objectForKey:@"endCaptures"] == nil && [pattern objectForKey:@"captures"] == nil);
 		
 		if ([pattern objectForKey:@"endCaptures"] != nil) {
 			NSDictionary *endCaptureDic = [pattern objectForKey:@"endCaptures"];
@@ -965,7 +968,7 @@ void processPattern(NSDictionary *pattern, SFONode **rootNode) {
 void processLanguage(NSString *bundleRoot, NSString *languagePath, NSString *outputPath)
 {
 	NSDictionary *languageAsDic = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfFile:languagePath] options:0 format:nil error:nil];
-	
+	NSLog(@"languageAsDic = %@", languageAsDic);
 	NSString *bundleSourceName = [languageAsDic objectForKey:@"name"];
 	if (![bundleSourceName length])
 		bundleSourceName = [[languagePath lastPathComponent] stringByDeletingPathExtension];

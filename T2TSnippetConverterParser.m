@@ -59,18 +59,18 @@
 **                       and nonterminal numbers.  "unsigned char" is
 **                       used if there are fewer than 250 rules and
 **                       states combined.  "int" is used otherwise.
-**    ParseTOKENTYPE     is the data type used for minor tokens given 
+**    T2TParseTOKENTYPE     is the data type used for minor tokens given 
 **                       directly to the parser from the tokenizer.
 **    YYMINORTYPE        is the data type used for all minor tokens.
 **                       This is typically a union of many types, one of
-**                       which is ParseTOKENTYPE.  The entry in the union
+**                       which is T2TParseTOKENTYPE.  The entry in the union
 **                       for base tokens is called "yy0".
 **    YYSTACKDEPTH       is the maximum depth of the parser's stack.  If
 **                       zero the stack is dynamically sized using realloc()
-**    ParseARG_SDECL     A static variable declaration for the %extra_argument
-**    ParseARG_PDECL     A parameter declaration for the %extra_argument
-**    ParseARG_STORE     Code to store %extra_argument into yypParser
-**    ParseARG_FETCH     Code to extract %extra_argument from yypParser
+**    T2TParseARG_SDECL     A static variable declaration for the %extra_argument
+**    T2TParseARG_PDECL     A parameter declaration for the %extra_argument
+**    T2TParseARG_STORE     Code to store %extra_argument into yypParser
+**    T2TParseARG_FETCH     Code to extract %extra_argument from yypParser
 **    YYNSTATE           the combined number of states.
 **    YYNRULE            the number of rules in the grammar
 **    YYERRORSYMBOL      is the code number of the error symbol.  If not
@@ -79,19 +79,19 @@
 #define YYCODETYPE unsigned char
 #define YYNOCODE 25
 #define YYACTIONTYPE unsigned char
-#define ParseTOKENTYPE T2TSnippetToken
+#define T2TParseTOKENTYPE T2TSnippetToken
 typedef union {
   int yyinit;
-  ParseTOKENTYPE yy0;
+  T2TParseTOKENTYPE yy0;
   NSString* yy7;
 } YYMINORTYPE;
 #ifndef YYSTACKDEPTH
 #define YYSTACKDEPTH 100
 #endif
-#define ParseARG_SDECL NSMutableString *output;
-#define ParseARG_PDECL ,NSMutableString *output
-#define ParseARG_FETCH NSMutableString *output = yypParser->output
-#define ParseARG_STORE yypParser->output = output
+#define T2TParseARG_SDECL NSMutableString *output;
+#define T2TParseARG_PDECL ,NSMutableString *output
+#define T2TParseARG_FETCH NSMutableString *output = yypParser->output
+#define T2TParseARG_STORE yypParser->output = output
 #define YYNSTATE 37
 #define YYNRULE 32
 #define YY_NO_ACTION      (YYNSTATE+YYNRULE+2)
@@ -245,7 +245,7 @@ struct yyParser {
   int yyidxMax;                 /* Maximum value of yyidx */
 #endif
   int yyerrcnt;                 /* Shifts left before out of the error */
-  ParseARG_SDECL                /* A place to hold %extra_argument */
+  T2TParseARG_SDECL                /* A place to hold %extra_argument */
 #if YYSTACKDEPTH<=0
   int yystksz;                  /* Current side of the stack */
   yyStackEntry *yystack;        /* The parser's stack */
@@ -279,7 +279,7 @@ static char *yyTracePrompt = 0;
 ** Outputs:
 ** None.
 */
-void ParseTrace(FILE *TraceFILE, char *zTracePrompt){
+void T2TParseTrace(FILE *TraceFILE, char *zTracePrompt){
   yyTraceFILE = TraceFILE;
   yyTracePrompt = zTracePrompt;
   if( yyTraceFILE==0 ) yyTracePrompt = 0;
@@ -373,9 +373,9 @@ static void yyGrowStack(yyParser *p){
 **
 ** Outputs:
 ** A pointer to a parser.  This pointer is used in subsequent calls
-** to Parse and ParseFree.
+** to T2TParse and T2TParseFree.
 */
-void *ParseAlloc(void *(*mallocProc)(size_t)){
+void *T2TParseAlloc(void *(*mallocProc)(size_t)){
   yyParser *pParser;
   pParser = (yyParser*)(*mallocProc)( (size_t)sizeof(yyParser) );
   if( pParser ){
@@ -402,7 +402,7 @@ static void yy_destructor(
   YYCODETYPE yymajor,     /* Type code for object to destroy */
   YYMINORTYPE *yypminor   /* The object to be destroyed */
 ){
-  ParseARG_FETCH;
+  T2TParseARG_FETCH;
   switch( yymajor ){
     /* Here is inserted the actions which take place when a
     ** terminal or non-terminal is destroyed.  This can happen
@@ -451,12 +451,12 @@ static int yy_pop_parser_stack(yyParser *pParser){
 ** Inputs:
 ** <ul>
 ** <li>  A pointer to the parser.  This should be a pointer
-**       obtained from ParseAlloc.
+**       obtained from T2TParseAlloc.
 ** <li>  A pointer to a function used to reclaim memory obtained
 **       from malloc.
 ** </ul>
 */
-void ParseFree(
+void T2TParseFree(
   void *p,                    /* The parser to be deleted */
   void (*freeProc)(void*)     /* Function used to reclaim memory */
 ){
@@ -473,7 +473,7 @@ void ParseFree(
 ** Return the peak depth of the stack for a parser.
 */
 #ifdef YYTRACKMAXSTACKDEPTH
-int ParseStackPeak(void *p){
+int T2TParseStackPeak(void *p){
   yyParser *pParser = (yyParser*)p;
   return pParser->yyidxMax;
 }
@@ -574,7 +574,7 @@ static int yy_find_reduce_action(
 ** The following routine is called if the stack overflows.
 */
 static void yyStackOverflow(yyParser *yypParser, YYMINORTYPE *yypMinor){
-   ParseARG_FETCH;
+   T2TParseARG_FETCH;
    yypParser->yyidx--;
 #ifndef NDEBUG
    if( yyTraceFILE ){
@@ -584,7 +584,7 @@ static void yyStackOverflow(yyParser *yypParser, YYMINORTYPE *yypMinor){
    while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
    /* Here code is inserted which will execute if the parser
    ** stack every overflows */
-   ParseARG_STORE; /* Suppress warning about unused %extra_argument var */
+   T2TParseARG_STORE; /* Suppress warning about unused %extra_argument var */
 }
 
 /*
@@ -689,7 +689,7 @@ static void yy_reduce(
   YYMINORTYPE yygotominor;        /* The LHS of the rule reduced */
   yyStackEntry *yymsp;            /* The top of the parser's stack */
   int yysize;                     /* Amount to pop the stack */
-  ParseARG_FETCH;
+  T2TParseARG_FETCH;
   yymsp = &yypParser->yystack[yypParser->yyidx];
 #ifndef NDEBUG
   if( yyTraceFILE && yyruleno>=0 
@@ -727,14 +727,14 @@ static void yy_reduce(
   **     break;
   */
       case 0: /* main ::= superroot */
-#line 34 "T2TSnippetConverterParser.lemon"
+#line 36 "T2TSnippetConverterParser.lemon"
 {
     [output appendString:yymsp[0].minor.yy7]; }
 #line 734 "T2TSnippetConverterParser.c"
         break;
       case 1: /* superroot ::= superroot superroot_inner */
       case 4: /* root ::= root root_inner */ yytestcase(yyruleno==4);
-#line 38 "T2TSnippetConverterParser.lemon"
+#line 40 "T2TSnippetConverterParser.lemon"
 {
 	yygotominor.yy7 = [(yymsp[-1].minor.yy7 ?: @"") stringByAppendingString:(yymsp[0].minor.yy7 ?: @"")]; }
 #line 741 "T2TSnippetConverterParser.c"
@@ -748,27 +748,27 @@ static void yy_reduce(
       case 12: /* root_inner_no_verbatim ::= tabstop */ yytestcase(yyruleno==12);
       case 13: /* root_inner_no_verbatim ::= variable */ yytestcase(yyruleno==13);
       case 14: /* root_inner_no_verbatim ::= shell */ yytestcase(yyruleno==14);
-#line 40 "T2TSnippetConverterParser.lemon"
+#line 42 "T2TSnippetConverterParser.lemon"
 {
 	yygotominor.yy7 = yymsp[0].minor.yy7; }
 #line 755 "T2TSnippetConverterParser.c"
         break;
       case 3: /* superroot ::= */
       case 6: /* root ::= */ yytestcase(yyruleno==6);
-#line 42 "T2TSnippetConverterParser.lemon"
+#line 44 "T2TSnippetConverterParser.lemon"
 {
 	yygotominor.yy7 = @""; }
 #line 762 "T2TSnippetConverterParser.c"
         break;
       case 10: /* root_inner ::= root_inner_no_verbatim */
-#line 62 "T2TSnippetConverterParser.lemon"
+#line 64 "T2TSnippetConverterParser.lemon"
 {
   yygotominor.yy7 = yymsp[0].minor.yy7; /*[@"%" stringByAppendingString:yymsp[0].minor.yy7];*/ }
 #line 768 "T2TSnippetConverterParser.c"
         break;
       case 15: /* tabstop ::= DOLLAR NUMERIC */
       case 17: /* variable ::= DOLLAR IDENTIFIER */ yytestcase(yyruleno==17);
-#line 76 "T2TSnippetConverterParser.lemon"
+#line 78 "T2TSnippetConverterParser.lemon"
 {
     yygotominor.yy7 = [NSString stringWithFormat:@"%%{%@}", PAYLOAD_TO_STRING(yymsp[0].minor.yy0)]; }
 #line 775 "T2TSnippetConverterParser.c"
@@ -776,13 +776,13 @@ static void yy_reduce(
       case 16: /* tabstop ::= DOLLAR_CURLY NUMERIC misc CURLY */
       case 18: /* variable ::= DOLLAR_CURLY IDENTIFIER misc CURLY */ yytestcase(yyruleno==18);
       case 23: /* shell ::= DOLLAR_CURLY SHELL misc CURLY */ yytestcase(yyruleno==23);
-#line 78 "T2TSnippetConverterParser.lemon"
+#line 80 "T2TSnippetConverterParser.lemon"
 {
     yygotominor.yy7 = [NSString stringWithFormat:@"%%{%@%@}", PAYLOAD_TO_STRING(yymsp[-2].minor.yy0), yymsp[-1].minor.yy7]; }
 #line 783 "T2TSnippetConverterParser.c"
         break;
       case 19: /* misc ::= COLON root */
-#line 88 "T2TSnippetConverterParser.lemon"
+#line 90 "T2TSnippetConverterParser.lemon"
 {
     yygotominor.yy7 = [NSString stringWithFormat:@"=\"%@\"", ESCAPE_SNIPPET_STRING(yymsp[0].minor.yy7)]; }
 #line 789 "T2TSnippetConverterParser.c"
@@ -793,37 +793,37 @@ static void yy_reduce(
       case 25: /* verbatim ::= REGEXY */ yytestcase(yyruleno==25);
       case 30: /* verbatim ::= IDENTIFIER */ yytestcase(yyruleno==30);
       case 31: /* verbatim ::= NUMERIC */ yytestcase(yyruleno==31);
-#line 91 "T2TSnippetConverterParser.lemon"
+#line 93 "T2TSnippetConverterParser.lemon"
 {
     yygotominor.yy7 = PAYLOAD_TO_STRING(yymsp[0].minor.yy0); }
 #line 800 "T2TSnippetConverterParser.c"
         break;
       case 21: /* misc ::= */
-#line 93 "T2TSnippetConverterParser.lemon"
+#line 95 "T2TSnippetConverterParser.lemon"
 {
     yygotominor.yy7 = @""; }
 #line 806 "T2TSnippetConverterParser.c"
         break;
       case 26: /* verbatim ::= CHAR */
-#line 110 "T2TSnippetConverterParser.lemon"
+#line 112 "T2TSnippetConverterParser.lemon"
 {
     yygotominor.yy7 = CHAR_PAYLOAD_TO_STRING(yymsp[0].minor.yy0); }
 #line 812 "T2TSnippetConverterParser.c"
         break;
       case 27: /* verbatim ::= DOLLAR_CURLY */
-#line 112 "T2TSnippetConverterParser.lemon"
+#line 114 "T2TSnippetConverterParser.lemon"
 {
     yygotominor.yy7 = @"${"; }
 #line 818 "T2TSnippetConverterParser.c"
         break;
       case 28: /* verbatim ::= DOLLAR */
-#line 114 "T2TSnippetConverterParser.lemon"
+#line 116 "T2TSnippetConverterParser.lemon"
 {
     yygotominor.yy7 = @"$"; }
 #line 824 "T2TSnippetConverterParser.c"
         break;
       case 29: /* verbatim ::= COLON */
-#line 116 "T2TSnippetConverterParser.lemon"
+#line 118 "T2TSnippetConverterParser.lemon"
 {
     yygotominor.yy7 = @":"; }
 #line 830 "T2TSnippetConverterParser.c"
@@ -865,7 +865,7 @@ static void yy_reduce(
 static void yy_parse_failed(
   yyParser *yypParser           /* The parser */
 ){
-  ParseARG_FETCH;
+  T2TParseARG_FETCH;
 #ifndef NDEBUG
   if( yyTraceFILE ){
     fprintf(yyTraceFILE,"%sFail!\n",yyTracePrompt);
@@ -874,7 +874,7 @@ static void yy_parse_failed(
   while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
   /* Here code is inserted which will be executed whenever the
   ** parser fails */
-  ParseARG_STORE; /* Suppress warning about unused %extra_argument variable */
+  T2TParseARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }
 #endif /* YYNOERRORRECOVERY */
 
@@ -886,13 +886,13 @@ static void yy_syntax_error(
   int yymajor,                   /* The major type of the error token */
   YYMINORTYPE yyminor            /* The minor type of the error token */
 ){
-  ParseARG_FETCH;
+  T2TParseARG_FETCH;
 #define TOKEN (yyminor.yy0)
 #line 28 "T2TSnippetConverterParser.lemon"
 
 	printf("Syntax error\n");
 #line 895 "T2TSnippetConverterParser.c"
-  ParseARG_STORE; /* Suppress warning about unused %extra_argument variable */
+  T2TParseARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }
 
 /*
@@ -901,7 +901,7 @@ static void yy_syntax_error(
 static void yy_accept(
   yyParser *yypParser           /* The parser */
 ){
-  ParseARG_FETCH;
+  T2TParseARG_FETCH;
 #ifndef NDEBUG
   if( yyTraceFILE ){
     fprintf(yyTraceFILE,"%sAccept!\n",yyTracePrompt);
@@ -910,12 +910,12 @@ static void yy_accept(
   while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
   /* Here code is inserted which will be executed whenever the
   ** parser accepts */
-  ParseARG_STORE; /* Suppress warning about unused %extra_argument variable */
+  T2TParseARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }
 
 /* The main parser program.
 ** The first argument is a pointer to a structure obtained from
-** "ParseAlloc" which describes the current state of the parser.
+** "T2TParseAlloc" which describes the current state of the parser.
 ** The second argument is the major token number.  The third is
 ** the minor token.  The fourth optional argument is whatever the
 ** user wants (and specified in the grammar) and is available for
@@ -932,11 +932,11 @@ static void yy_accept(
 ** Outputs:
 ** None.
 */
-void Parse(
+void T2TParse(
   void *yyp,                   /* The parser */
   int yymajor,                 /* The major token code number */
-  ParseTOKENTYPE yyminor       /* The value for the token */
-  ParseARG_PDECL               /* Optional %extra_argument parameter */
+  T2TParseTOKENTYPE yyminor       /* The value for the token */
+  T2TParseARG_PDECL               /* Optional %extra_argument parameter */
 ){
   YYMINORTYPE yyminorunion;
   int yyact;            /* The parser action. */
@@ -964,7 +964,7 @@ void Parse(
   }
   yyminorunion.yy0 = yyminor;
   yyendofinput = (yymajor==0);
-  ParseARG_STORE;
+  T2TParseARG_STORE;
 
 #ifndef NDEBUG
   if( yyTraceFILE ){

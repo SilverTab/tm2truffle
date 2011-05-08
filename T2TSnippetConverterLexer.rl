@@ -36,7 +36,7 @@ main := |*
 
 void emit_to_lemon(T2TSnippetToken token, void* lemon, NSMutableString *output)
 {
-	Parse(lemon, token.type, token, output);
+	T2TParse(lemon, token.type, token, output);
 }
 
 void emit_char(char c, void* lemon, NSMutableString *output)
@@ -93,7 +93,7 @@ NSString *T2TConvertTextMateSnippetToChocolat(NSString *tmSnippet)
 	char* data = (char *)[tmSnippet UTF8String];
 	
 	//Set up lemon
-	void* lemon = ParseAlloc(malloc);
+	void* lemon = T2TParseAlloc(malloc);
 	
 	//Output
 	NSMutableString *output = [[NSMutableString alloc] initWithCapacity:[tmSnippet length]];
@@ -116,8 +116,8 @@ NSString *T2TConvertTextMateSnippetToChocolat(NSString *tmSnippet)
 		
 	//End lemon
 	T2TSnippetToken token;
-	Parse(lemon, 0, token, output);
-	ParseFree(lemon, free);
+	T2TParse(lemon, 0, token, output);
+	T2TParseFree(lemon, free);
 		
 	//Return the output
 	NSLog(@"Output: %@", output);
