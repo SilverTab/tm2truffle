@@ -11,17 +11,19 @@
 regex_string = ([^/\\\}] | "\\\\" | "\\/" | "\\" [^/\\\}])+;
 regex = "/" regex_string "/" regex_string ("/" alnum*)?;
 
+action test_nested { nesting > 0 }
+
 main := |*
 	"\\$" { emit_char('$', lemon, output); };
 	"\\\\" { emit_char('\\', lemon, output); };
 	"\\`" { emit_char('`', lemon, output); };
 
-	"${" { emit(DOLLAR_CURLY, ts, te, lemon, output); };
+	"${" { emit(DOLLAR_CURLY, ts, te, lemon, output); nesting++; };
 	"$" { emit(DOLLAR, ts, te, lemon, output); };
 	":" { emit(COLON, ts, te, lemon, output); };
-	":}" { emit(CURLY, ts, te, lemon, output); };
-	"}" { emit(CURLY, ts, te, lemon, output); };
-	regex { emit(REGEXY, ts, te, lemon, output); };
+	":}" { emit(CURLY, ts, te, lemon, output); if (nesting > 0) nesting--; };
+	"}" { emit(CURLY, ts, te, lemon, output); if (nesting > 0) nesting--; };
+	regex when test_nested { emit(REGEXY, ts, te, lemon, output); };
 
 	(alpha | '_') (alnum | '_')* { emit(IDENTIFIER, ts, te, lemon, output); };
 	digit+ { emit(NUMERIC, ts, te, lemon, output); };
@@ -109,6 +111,7 @@ NSString *T2TConvertTextMateSnippetToChocolat(NSString *tmSnippet)
 	int cs = 0, act, have = 0, curline = 1;
 	char *ts, *te = 0;
 	int done = 0;
+	int nesting = 0;
 	
 	//Run the machine
 	%% write init;

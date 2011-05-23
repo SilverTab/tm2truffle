@@ -13,8 +13,8 @@
 #ifndef ESCAPE_SNIPPET_STRING
 #define ESCAPE_SNIPPET_STRING(s) ({ \
 	NSMutableString *newString = [s mutableCopy]; \
-	[newString replaceOccurrencesOfString:@"\"" withString:@"\\\"" options:NSLiteralSearch range:NSMakeRange(0, [newString length])]; \
 	[newString replaceOccurrencesOfString:@"\\" withString:@"\\\\" options:NSLiteralSearch range:NSMakeRange(0, [newString length])]; \
+	[newString replaceOccurrencesOfString:@"\"" withString:@"\\\"" options:NSLiteralSearch range:NSMakeRange(0, [newString length])]; \
 	newString; \
 })
 #endif
@@ -90,7 +90,7 @@ variable(v) ::= DOLLAR_CURLY IDENTIFIER(n) misc(m) CURLY. {
 misc(m) ::= COLON root(r). {
     m = [NSString stringWithFormat:@"=\"%@\"", ESCAPE_SNIPPET_STRING(r)]; }
 
-misc(m) ::= REGEX(r). {
+misc(m) ::= REGEXY(r). {
     m = PAYLOAD_TO_STRING(r); }
 misc(m) ::= . {
     m = @""; }

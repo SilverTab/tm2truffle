@@ -257,14 +257,17 @@ void processIq(NSString *bundleRoot, NSString *outputDir, NSString *rootScope, N
 	}
 	
 	for(NSDictionary *prefItem in prefArray) {
-		
 		NSString *ruleScope = [prefItem objectForKey:@"scope"];
+		//NSLog(@"ruleScope = %@", ruleScope);
+		//NSLog(@"prefItem = %@", prefItem);
 		if (![ruleScope length])
 			continue;
 		
 		NSRange range = [ruleScope rangeOfString:rootScope options:NSCaseInsensitiveSearch];
-		if (range.location != NSNotFound)
-			continue;
+		//NSLog(@"rootScope = %@", rootScope);
+		//NSLog(@"range = %@", NSStringFromRange(range));
+		//if (range.location != NSNotFound)
+		//	continue;
 		
 		SFONode *ruleNode;
 		if (range.location == 0 && range.length == [ruleScope length])
@@ -381,9 +384,13 @@ void processIq(NSString *bundleRoot, NSString *outputDir, NSString *rootScope, N
 #pragma mark Indentation
 		
 		// identation!
+		//NSLog(@"______ INDENT!");
 		if ([[[prefItem objectForKey:@"settings"] objectForKey:@"decreaseIndentPattern"] length] != nil) {
+		//NSLog(@"______ DECREASE!");
 			SFONode *dintentNode = SELFML(@"indentation.decrease", [[prefItem objectForKey:@"settings"] objectForKey:@"decreaseIndentPattern"]);
+			//NSLog(@"| dintentNode = %@", [dintentNode selfmlRepresentation]);
 			[ruleNode addChild:dintentNode];
+			//NSLog(@"| ruleNode = %@", [ruleNode selfmlRepresentation]);
 		}
 		
 		if ([[[prefItem objectForKey:@"settings"] objectForKey:@"increaseIndentPattern"] length] != nil) {
@@ -467,6 +474,7 @@ void processIq(NSString *bundleRoot, NSString *outputDir, NSString *rootScope, N
 			}
 		}
 		
+		//NSLog(@"______ ADDING! %d %d %d", ruleNode, rootNode, ruleNode == rootNode);
 		
 		if (ruleNode != rootNode)
 			[rootNode addChild:ruleNode];
@@ -489,7 +497,7 @@ void processIq(NSString *bundleRoot, NSString *outputDir, NSString *rootScope, N
 													  error:nil];
 	}
 	
-	
+	//NSLog(@"[rootNode selfmlRepresentation] = %@", [rootNode selfmlRepresentation]);
 	[[rootNode selfmlRepresentation] writeToFile:[outputDir stringByAppendingPathComponent:@"iq.selfml"] 
 									  atomically:YES 
 										encoding:NSUTF8StringEncoding 
@@ -864,7 +872,6 @@ void processPattern(NSDictionary *pattern, SFONode **rootNode) {
 	// match
 	if ([pattern objectForKey:@"match"] != nil) {
 		SFONode *matchNode = SELFML(@"match");
-        NSLog(@"[pattern objectForKey:@\"match\"] = %d | %@", [[pattern objectForKey:@"captures"] count] == 0, [pattern objectForKey:@"match"]);
 		SFONode *regexNode = processRegex([pattern objectForKey:@"match"], &matchNode, [[pattern objectForKey:@"captures"] count] == 0);
 		
 		
@@ -968,7 +975,6 @@ void processPattern(NSDictionary *pattern, SFONode **rootNode) {
 void processLanguage(NSString *bundleRoot, NSString *languagePath, NSString *outputPath)
 {
 	NSDictionary *languageAsDic = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfFile:languagePath] options:0 format:nil error:nil];
-	NSLog(@"languageAsDic = %@", languageAsDic);
 	NSString *bundleSourceName = [languageAsDic objectForKey:@"name"];
 	if (![bundleSourceName length])
 		bundleSourceName = [[languagePath lastPathComponent] stringByDeletingPathExtension];
