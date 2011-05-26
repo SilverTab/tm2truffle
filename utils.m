@@ -1054,16 +1054,9 @@ void importLanguages(NSString *bundleRoot, NSString *outputFile)
 
 void copyResources(NSString *bundleRoot, NSString *outputFile)
 {
-	NSString *supportDir = [bundleRoot stringByAppendingPathComponent:@"Support"];
-	NSString *destinationPath = [outputFile stringByAppendingPathComponent:@"resources"];
-	
-	if (![[NSFileManager defaultManager] fileExistsAtPath:supportDir]) 
-		return;
-	
-	
-	[[NSFileManager defaultManager] copyItemAtPath:supportDir toPath:destinationPath error:nil];
-	
-	
+	[[NSFileManager defaultManager] copyItemAtPath:[bundleRoot stringByAppendingPathComponent:@"Support"] toPath:[outputFile stringByAppendingPathComponent:@"support"] error:nil];
+	[[NSFileManager defaultManager] copyItemAtPath:[bundleRoot stringByAppendingPathComponent:@"Resources"] toPath:[outputFile stringByAppendingPathComponent:@"resources"] error:nil];
+	[[NSFileManager defaultManager] copyItemAtPath:[bundleRoot stringByAppendingPathComponent:@"Contents"] toPath:[outputFile stringByAppendingPathComponent:@"contents"] error:nil];
 }
 
 #pragma mark -
