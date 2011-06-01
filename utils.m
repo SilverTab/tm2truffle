@@ -28,6 +28,15 @@ NSString* T2TSanatizeRepresentationIdentifier(NSString* repid)
 #pragma mark -
 #pragma mark Metadata
 static NSDictionary *uuidIdentifierMap;
+static NSSet *deletedUUIDs;
+
+static inline BOOL T2TDictionaryIsEvil(NSDictionary *dic)
+{
+	NSString *uuid = [dic objectForKey:@"UUID"] ?: [dic objectForKey:@"uuid"];
+	if ([uuid length] && [deletedUUIDs containsObject:uuid])
+		return YES;
+	return NO;
+}
 
 void importMenus(NSDictionary *infoPlist, NSString *outputPath)
 {
@@ -126,7 +135,12 @@ int importMetaData(NSString *bundleRoot, NSString *outputFile)
 	}
 	SFONode *providerNode = SELFML(@"provider", provider);
 	[rootNode addChild:providerNode];
-
+	
+	deletedUUIDs = [[NSMutableSet alloc] init];
+	NSArray *deletedUUIDsArray = [metaDic objectForKey:@"deleted"];
+	if ([deletedUUIDsArray count])
+		[deletedUUIDs addObjectsFromArray:deletedUUIDsArray];
+	
 	NSString *displayName = [metaDic objectForKey:@"name"];
 	if ([displayName length]) {
 		SFONode *displayNameNode = SELFML(@"display-name", displayName);
@@ -627,6 +641,9 @@ void processSnippet(NSString *snippetPath, NSString *outputPath)
 																				format:nil 
 																				 error:nil];
 		
+		if (T2TDictionaryIsEvil(snippetAsDic))
+			return;
+		
 		//NSDictionary *snippetAsDic = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfFile:snippetPath] options:0 format:nil error:nil];
 		NSString *newName = [T2TSanatizeRepresentationIdentifier([[snippetPath lastPathComponent] stringByDeletingPathExtension]) stringByAppendingPathExtension:@"selfml"];
 		SFONode *rootNode = [SFONode node];
@@ -717,6 +734,11 @@ void processDragCommand(NSString *fullPath, NSString *outputPath)
 	NSString *fileName = T2TSanatizeRepresentationIdentifier([fullPath lastPathComponent]);
 	NSString *fullFileName = [fileName stringByReplacingOccurrencesOfString:[fileName pathExtension] withString:@"selfml"];
 	NSDictionary *commandDic = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfFile:fullPath] options:0 format:nil error:nil];
+	
+	if (T2TDictionaryIsEvil(commandDic))
+			return;
+		
+	
 	NSString *fullOutputPath = [outputPath stringByAppendingPathComponent:fullFileName];
 	SFONode *rootNode = [SFONode node];
 	
@@ -852,6 +874,19 @@ begintry
 	NSString *fileName = T2TSanatizeRepresentationIdentifier([fullPath lastPathComponent]);
 	NSString *fullFileName = [fileName stringByReplacingOccurrencesOfString:[fileName pathExtension] withString:@"selfml"];
 	NSDictionary *commandDic = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfFile:fullPath] options:0 format:nil error:nil];
+	
+	if (T2TDictionaryIsEvil(commandDic))
+		return;
+		
+	NSString *commandDicInput = [commandDic objectForKey:@"command"];
+	if (![commandDicInput length])
+		return;
+		
+	// We must remove this if we ever support anything in lib/!
+	// If we have "TM_SUPPORT_PATH" and "lib/" then this is HIGHLY SUSPICIOUS!
+	if ([commandDicInput rangeOfString:@"lib/"].location != NSNotFound && [commandDicInput rangeOfString:@"TM_SUPPORT_PATH"].location != NSNotFound)
+		return;
+	
 	NSString *fullOutputPath = [outputPath stringByAppendingPathComponent:fullFileName];
 	SFONode *rootNode = [SFONode node];
 	
@@ -1224,6 +1259,10 @@ begintry
 																	   options:0 
 																		format:nil 
 																		 error:nil];
+	
+	if (T2TDictionaryIsEvil(metaData))
+			return;
+		
 	
 	NSDictionary *bundleMetaData = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfFile:[bundleRoot stringByAppendingPathComponent:@"info.plist"]]
 																			 options:0 
