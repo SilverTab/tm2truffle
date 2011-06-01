@@ -16,12 +16,18 @@ int main (int argc, const char * argv[]) {
 	//NSLog(@"Main Output: %@", output);
     //return 0;
 	// Very thorough argument checking...
+
+/*
 	if(argc != 3) {
 		NSLog(@"Only 2 argument are required, the input path...and output path kthxbye");
 		return 1;
 	}
-	pathToBundle	= [NSString stringWithCString:argv[1] encoding:NSASCIIStringEncoding];
-	outputPath		= [NSString stringWithCString:argv[2] encoding:NSASCIIStringEncoding];
+*/
+
+	pathToBundle	= //@"/Users/alexgordon/chocolat_truffles/tm_bundles/html.tmbundle";
+		[NSString stringWithCString:argv[1] encoding:NSASCIIStringEncoding];
+	outputPath		= //@"/Users/alexgordon/chocolat_truffles/Truffles_test/html.truffle";
+		[NSString stringWithCString:argv[2] encoding:NSASCIIStringEncoding];
 	
 	// Does that path exist?
 	if(![[NSFileManager defaultManager] fileExistsAtPath:pathToBundle]) {
@@ -50,6 +56,9 @@ int main (int argc, const char * argv[]) {
 		//processIq(pathToBundle, outputPath);
 		// Good! Do something with it!
 		importSnippets(pathToBundle, outputPath);
+		
+		importMetaData_menus(pathToBundle, outputPath);
+		
 	} else if([[[pathToBundle pathExtension] lowercaseString] isEqual:@"tmtheme"]) {
 		importTheme(pathToBundle, outputPath);
 		
