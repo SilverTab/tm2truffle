@@ -88,7 +88,7 @@ variable(v) ::= DOLLAR_CURLY IDENTIFIER(n) misc(m) CURLY. {
 
 %type misc {NSString*}
 misc(m) ::= COLON root(r). {
-    m = [NSString stringWithFormat:@"=\"%@\"", ESCAPE_SNIPPET_STRING(r)]; }
+    m = [NSString stringWithFormat:@"=\"%@\"", r]; }
 
 misc(m) ::= REGEXY(r). {
     m = PAYLOAD_TO_STRING(r); }
