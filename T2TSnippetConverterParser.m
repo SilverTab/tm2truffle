@@ -784,7 +784,7 @@ static void yy_reduce(
       case 19: /* misc ::= COLON root */
 #line 90 "T2TSnippetConverterParser.lemon"
 {
-    yygotominor.yy41 = [NSString stringWithFormat:@"=\"%@\"", ESCAPE_SNIPPET_STRING(yymsp[0].minor.yy41)]; }
+    yygotominor.yy41 = [NSString stringWithFormat:@"=\"%@\"", yymsp[0].minor.yy41]; }
 #line 789 "T2TSnippetConverterParser.c"
         break;
       case 20: /* misc ::= REGEXY */

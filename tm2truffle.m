@@ -17,12 +17,12 @@ int main (int argc, const char * argv[]) {
     //return 0;
 	// Very thorough argument checking...
 
-/*
+
 	if(argc != 3) {
 		NSLog(@"Only 2 argument are required, the input path...and output path kthxbye");
 		return 1;
 	}
-*/
+
 
 	pathToBundle	= //@"/Users/alexgordon/chocolat_truffles/tm_bundles/html.tmbundle";
 		[NSString stringWithCString:argv[1] encoding:NSASCIIStringEncoding];
