@@ -87,9 +87,12 @@ variable(v) ::= DOLLAR_CURLY IDENTIFIER(n) misc(m) CURLY. {
     v = [NSString stringWithFormat:@"%%{%@%@}", PAYLOAD_TO_STRING(n), m]; }
 
 %type misc {NSString*}
+
+// Note that this rule must be above the misc(m) ::= COLON root(r). rule in order to sort out the ambiguity
+misc(m) ::= COLON SHELL(r). {
+    m = [NSString stringWithFormat:@"=%@", PAYLOAD_TO_STRING(r)]; }
 misc(m) ::= COLON root(r). {
     m = [NSString stringWithFormat:@"=\"%@\"", r]; }
-
 misc(m) ::= REGEXY(r). {
     m = PAYLOAD_TO_STRING(r); }
 misc(m) ::= . {

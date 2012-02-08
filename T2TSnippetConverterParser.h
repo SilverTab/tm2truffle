@@ -4,6 +4,6 @@
 #define CURLY                           4
 #define IDENTIFIER                      5
 #define COLON                           6
-#define REGEXY                          7
-#define SHELL                           8
+#define SHELL                           7
+#define REGEXY                          8
 #define CHAR                            9
