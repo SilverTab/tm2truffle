@@ -12,9 +12,9 @@ int main (int argc, const char * argv[]) {
 	
 	//NSLog(@"Key equiv: `%@`", T2TConvertKeyEquivalent([NSString stringWithFormat:@"$~%C", 0x0003]));
 	//return 0;
-	NSString *output = T2TConvertTextMateSnippetToChocolat(@"<head>\n	${1:`abc`}<meta http-equiv=\"Content-type\" content=\"text/html; charset=utf-8\"${TM_XHTML}>\n	<title>${1:${TM_FILENAME/((.+)\\..*)?/(?2:$2:Page Title)/}}</title>\n	$0\n</head>");//@"foo${1:${2}baz$3}bar!");
-	NSLog(@"Main Output: %@", output);
-    return 0;
+//	NSString *output = T2TConvertTextMateSnippetToChocolat(@"<head>\n	${1:`abc`}<meta http-equiv=\"Content-type\" content=\"text/html; charset=utf-8\"${TM_XHTML}>\n	<title>${1:${TM_FILENAME/((.+)\\..*)?/(?2:$2:Page Title)/}}</title>\n	$0\n</head>");//@"foo${1:${2}baz$3}bar!");
+//	NSLog(@"Main Output: %@", output);
+//    return 0;
 	// Very thorough argument checking...
 
 
