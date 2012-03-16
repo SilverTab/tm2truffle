@@ -64,7 +64,7 @@ superroot_inner(i) ::= verbatim(v). {
 root_inner(i) ::= root_inner_no_verbatim(t). {
   i = t; /*[@"%" stringByAppendingString:t];*/ }
 root_inner(i) ::= verbatim(v). {
-	i = v; }
+	i = ESCAPE_SNIPPET_STRING(v); }
 
 %type root_inner_no_verbatim {NSString*}
 root_inner_no_verbatim(i) ::= tabstop(t). {
@@ -100,7 +100,8 @@ misc(m) ::= . {
 
 %type shell {NSString*}
 shell(s1) ::= SHELL(s2). {
-    s1 = PAYLOAD_TO_STRING(s2); }
+    s1 = [NSString stringWithFormat:@"%%{%@}", PAYLOAD_TO_STRING(s2)]; // PAYLOAD_TO_STRING(s2);
+}
 
 shell(s1) ::= DOLLAR_CURLY SHELL(s2) misc(m) CURLY. {
     s1 = [NSString stringWithFormat:@"%%{%@%@}", PAYLOAD_TO_STRING(s2), m]; }

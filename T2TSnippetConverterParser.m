@@ -746,34 +746,39 @@ static void yy_reduce(
       case 7: /* superroot_inner ::= superverbatim */ yytestcase(yyruleno==7);
       case 8: /* superroot_inner ::= root_inner_no_verbatim */ yytestcase(yyruleno==8);
       case 9: /* superroot_inner ::= verbatim */ yytestcase(yyruleno==9);
-      case 11: /* root_inner ::= verbatim */ yytestcase(yyruleno==11);
       case 12: /* root_inner_no_verbatim ::= tabstop */ yytestcase(yyruleno==12);
       case 13: /* root_inner_no_verbatim ::= variable */ yytestcase(yyruleno==13);
       case 14: /* root_inner_no_verbatim ::= shell */ yytestcase(yyruleno==14);
 #line 42 "T2TSnippetConverterParser.lemon"
 {
 	yygotominor.yy41 = yymsp[0].minor.yy41; }
-#line 757 "T2TSnippetConverterParser.c"
+#line 756 "T2TSnippetConverterParser.c"
         break;
       case 3: /* superroot ::= */
       case 6: /* root ::= */ yytestcase(yyruleno==6);
 #line 44 "T2TSnippetConverterParser.lemon"
 {
 	yygotominor.yy41 = @""; }
-#line 764 "T2TSnippetConverterParser.c"
+#line 763 "T2TSnippetConverterParser.c"
         break;
       case 10: /* root_inner ::= root_inner_no_verbatim */
 #line 64 "T2TSnippetConverterParser.lemon"
 {
   yygotominor.yy41 = yymsp[0].minor.yy41; /*[@"%" stringByAppendingString:yymsp[0].minor.yy41];*/ }
-#line 770 "T2TSnippetConverterParser.c"
+#line 769 "T2TSnippetConverterParser.c"
+        break;
+      case 11: /* root_inner ::= verbatim */
+#line 66 "T2TSnippetConverterParser.lemon"
+{
+	yygotominor.yy41 = ESCAPE_SNIPPET_STRING(yymsp[0].minor.yy41); }
+#line 775 "T2TSnippetConverterParser.c"
         break;
       case 15: /* tabstop ::= DOLLAR NUMERIC */
       case 17: /* variable ::= DOLLAR IDENTIFIER */ yytestcase(yyruleno==17);
 #line 78 "T2TSnippetConverterParser.lemon"
 {
     yygotominor.yy41 = [NSString stringWithFormat:@"%%{%@}", PAYLOAD_TO_STRING(yymsp[0].minor.yy0)]; }
-#line 777 "T2TSnippetConverterParser.c"
+#line 782 "T2TSnippetConverterParser.c"
         break;
       case 16: /* tabstop ::= DOLLAR_CURLY NUMERIC misc CURLY */
       case 18: /* variable ::= DOLLAR_CURLY IDENTIFIER misc CURLY */ yytestcase(yyruleno==18);
@@ -781,22 +786,21 @@ static void yy_reduce(
 #line 80 "T2TSnippetConverterParser.lemon"
 {
     yygotominor.yy41 = [NSString stringWithFormat:@"%%{%@%@}", PAYLOAD_TO_STRING(yymsp[-2].minor.yy0), yymsp[-1].minor.yy41]; }
-#line 785 "T2TSnippetConverterParser.c"
+#line 790 "T2TSnippetConverterParser.c"
         break;
       case 19: /* misc ::= COLON SHELL */
 #line 92 "T2TSnippetConverterParser.lemon"
 {
     yygotominor.yy41 = [NSString stringWithFormat:@"=%@", PAYLOAD_TO_STRING(yymsp[0].minor.yy0)]; }
-#line 791 "T2TSnippetConverterParser.c"
+#line 796 "T2TSnippetConverterParser.c"
         break;
       case 20: /* misc ::= COLON root */
 #line 94 "T2TSnippetConverterParser.lemon"
 {
     yygotominor.yy41 = [NSString stringWithFormat:@"=\"%@\"", yymsp[0].minor.yy41]; }
-#line 797 "T2TSnippetConverterParser.c"
+#line 802 "T2TSnippetConverterParser.c"
         break;
       case 21: /* misc ::= REGEXY */
-      case 23: /* shell ::= SHELL */ yytestcase(yyruleno==23);
       case 25: /* superverbatim ::= CURLY */ yytestcase(yyruleno==25);
       case 26: /* verbatim ::= REGEXY */ yytestcase(yyruleno==26);
       case 31: /* verbatim ::= IDENTIFIER */ yytestcase(yyruleno==31);
@@ -804,37 +808,44 @@ static void yy_reduce(
 #line 96 "T2TSnippetConverterParser.lemon"
 {
     yygotominor.yy41 = PAYLOAD_TO_STRING(yymsp[0].minor.yy0); }
-#line 808 "T2TSnippetConverterParser.c"
+#line 812 "T2TSnippetConverterParser.c"
         break;
       case 22: /* misc ::= */
 #line 98 "T2TSnippetConverterParser.lemon"
 {
     yygotominor.yy41 = @""; }
-#line 814 "T2TSnippetConverterParser.c"
+#line 818 "T2TSnippetConverterParser.c"
+        break;
+      case 23: /* shell ::= SHELL */
+#line 102 "T2TSnippetConverterParser.lemon"
+{
+    yygotominor.yy41 = [NSString stringWithFormat:@"%%{%@}", PAYLOAD_TO_STRING(yymsp[0].minor.yy0)]; // PAYLOAD_TO_STRING(yymsp[0].minor.yy0);
+}
+#line 825 "T2TSnippetConverterParser.c"
         break;
       case 27: /* verbatim ::= CHAR */
-#line 115 "T2TSnippetConverterParser.lemon"
+#line 116 "T2TSnippetConverterParser.lemon"
 {
     yygotominor.yy41 = CHAR_PAYLOAD_TO_STRING(yymsp[0].minor.yy0); }
-#line 820 "T2TSnippetConverterParser.c"
+#line 831 "T2TSnippetConverterParser.c"
         break;
       case 28: /* verbatim ::= DOLLAR_CURLY */
-#line 117 "T2TSnippetConverterParser.lemon"
+#line 118 "T2TSnippetConverterParser.lemon"
 {
     yygotominor.yy41 = @"${"; }
-#line 826 "T2TSnippetConverterParser.c"
+#line 837 "T2TSnippetConverterParser.c"
         break;
       case 29: /* verbatim ::= DOLLAR */
-#line 119 "T2TSnippetConverterParser.lemon"
+#line 120 "T2TSnippetConverterParser.lemon"
 {
     yygotominor.yy41 = @"$"; }
-#line 832 "T2TSnippetConverterParser.c"
+#line 843 "T2TSnippetConverterParser.c"
         break;
       case 30: /* verbatim ::= COLON */
-#line 121 "T2TSnippetConverterParser.lemon"
+#line 122 "T2TSnippetConverterParser.lemon"
 {
     yygotominor.yy41 = @":"; }
-#line 838 "T2TSnippetConverterParser.c"
+#line 849 "T2TSnippetConverterParser.c"
         break;
       default:
         break;
@@ -899,7 +910,7 @@ static void yy_syntax_error(
 #line 28 "T2TSnippetConverterParser.lemon"
 
 	printf("Syntax error\n");
-#line 903 "T2TSnippetConverterParser.c"
+#line 914 "T2TSnippetConverterParser.c"
   T2TParseARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }
 

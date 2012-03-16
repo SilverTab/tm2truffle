@@ -12,7 +12,23 @@ int main (int argc, const char * argv[]) {
 	
 	//NSLog(@"Key equiv: `%@`", T2TConvertKeyEquivalent([NSString stringWithFormat:@"$~%C", 0x0003]));
 	//return 0;
-//	NSString *output = T2TConvertTextMateSnippetToChocolat(@"<head>\n	${1:`abc`}<meta http-equiv=\"Content-type\" content=\"text/html; charset=utf-8\"${TM_XHTML}>\n	<title>${1:${TM_FILENAME/((.+)\\..*)?/(?2:$2:Page Title)/}}</title>\n	$0\n</head>");//@"foo${1:${2}baz$3}bar!");
+    /*
+    NSString *output = T2TConvertTextMateSnippetToChocolat(@"def ${1:fname}(${2:`if [ \"$TM_CURRENT_LINE\" != \"\" ]\
+# poor man's way ... check if there is an indent or not\
+# (cuz we would have lost the class scope by this point)\
+then\
+echo \"self\"\
+fi`}):\
+${3/.+/\"\"\"/}${3:docstring for $1}${3/.+/\"\"\"\n/}${3/.+/\t/}${0:pass}");
+    */
+//    output = T2TConvertTextMateSnippetToChocolat(@"Dir[${1:\"${2:glob/**/*.rb}\"}]");
+    
+    // flunk`snippet_paren.rb`"${1:Failure message.}"`snippet_paren.rb end`$0
+    //output = T2TConvertTextMateSnippetToChocolat(@"flunk`snippet_paren.rb`\"${1:Failure message.}\"`snippet_paren.rb end`$0");
+//    NSLog(@"Main Output: %@", output);
+
+    
+    //	NSString *output = T2TConvertTextMateSnippetToChocolat(@"<head>\n	${1:`abc`}<meta http-equiv=\"Content-type\" content=\"text/html; charset=utf-8\"${TM_XHTML}>\n	<title>${1:${TM_FILENAME/((.+)\\..*)?/(?2:$2:Page Title)/}}</title>\n	$0\n</head>");//@"foo${1:${2}baz$3}bar!");
 //	NSLog(@"Main Output: %@", output);
 //    return 0;
 	// Very thorough argument checking...
