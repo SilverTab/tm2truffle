@@ -81,7 +81,8 @@ ${3/.+/\"\"\"/}${3:docstring for $1}${3/.+/\"\"\"\n/}${3/.+/\t/}${0:pass}");
 		
 	} else {
 		NSLog(@"Dude this is for bundles or themes... don't try to open random files with it..wtf man.. not cool");
-	}
+        return 1;
+    }
 	
 	
 	[pool release];
