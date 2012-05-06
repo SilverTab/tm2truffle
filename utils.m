@@ -884,9 +884,16 @@ begintry
 		
 	// We must remove this if we ever support anything in lib/!
 	// If we have "TM_SUPPORT_PATH" and "lib/" then this is HIGHLY SUSPICIOUS!
-	if ([commandDicInput rangeOfString:@"lib/"].location != NSNotFound && [commandDicInput rangeOfString:@"TM_SUPPORT_PATH"].location != NSNotFound)
+	/*
+    if (([commandDicInput rangeOfString:@"lib/"].location != NSNotFound || [commandDicInput rangeOfString:@"bin/"].location != NSNotFound) && (
+[commandDicInput rangeOfString:@"TM_SUPPORT_PATH"].location != NSNotFound || [commandDicInput rangeOfString:@"TM_BUNDLE_SUPPORT"].location != NSNotFound))
 		return;
-	
+	*/
+    
+    if ([commandDicInput rangeOfString:@"TM_SUPPORT_PATH"].location != NSNotFound || [commandDicInput rangeOfString:@"TM_BUNDLE_SUPPORT"].location != NSNotFound || [commandDicInput rangeOfString:@"require ENV"].location != NSNotFound || [commandDicInput rangeOfString:@"require '"].location != NSNotFound || [commandDicInput rangeOfString:@"require \""].location != NSNotFound || [commandDicInput rangeOfString:@"require $"].location != NSNotFound)
+		return;
+
+    
 	NSString *fullOutputPath = [outputPath stringByAppendingPathComponent:fullFileName];
 	SFONode *rootNode = [SFONode node];
 	
